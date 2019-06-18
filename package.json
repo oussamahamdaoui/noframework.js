@@ -8,7 +8,7 @@
     "watch": "watchify exemples/components-story.js -o build/index.js"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
