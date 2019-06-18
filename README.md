@@ -38,7 +38,7 @@ This is documentation is a good tutorial to teach devs to set up their developpm
 
 ## Getting started 🛠
 
-Here are the 10 steps you need to follow to get started:
+Here are the 11 steps you need to follow to get started:
 
 1. create a folder for your project
 2. run  `npm init`
@@ -63,8 +63,8 @@ Here are the 10 steps you need to follow to get started:
   }
 }
 ```
-5. create a `build` folder
-6. add a `index.html` file in it
+6. create a `build` folder
+7. add a `index.html` file in it
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -79,8 +79,8 @@ Here are the 10 steps you need to follow to get started:
 </body>
 </html>
 ```
-7. create a `src` folder
-8. create your first component `checkBoxCompoent.js`
+8. create a `src` folder
+9. create your first component `checkBoxCompoent.js`
 
 ```javascript
 const { html } = require('@forgjs/noframework');
@@ -154,7 +154,7 @@ const CheckBox = (value = true, label = '') => {
 module.exports = CheckBox;
 ```
 
-9. create the main fille `index.js`
+10. create the main fille `index.js`
 
 ```javascript
 const { $, html } = require('@forgjs/noframework');
@@ -174,7 +174,7 @@ checkBox.events.change = (newValue) => {
 $('body').appendChild(app);
 ```
 
-10. Run `npm start watch` this will build your project on every change
+11. Run `npm start watch` this will build your project on every change
 
 Here is the folder structure you will end up having:
 
