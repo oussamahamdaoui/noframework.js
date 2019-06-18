@@ -294,7 +294,7 @@ const ChatComponent = (messagesList = []) => {
   $('.text', DomElement).addEventListener('keypress', enter((e) => {
     const now = new Date();
     DomElement.statics.addMessage({
-      me: l, date: now, image: '', text: e.target.value,
+      me: l, date: now, image: l ? 'https://randomuser.me/api/portraits/women/7.jpg' : 'https://randomuser.me/api/portraits/men/3.jpg', text: e.target.value,
     });
 
     e.target.value = '';
@@ -957,6 +957,7 @@ const html = (text, ...stuff) => {
   }
   const ret = template.content.firstChild;
   ret.statics = {};
+  ret.events = {};
   $$('temp', ret).forEach((e) => {
     const id = parseInt(e.getAttribute('temp-id'), 10);
     const target = stuff[id];

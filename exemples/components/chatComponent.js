@@ -126,7 +126,7 @@ const ChatComponent = (messagesList = []) => {
   $('.text', DomElement).addEventListener('keypress', enter((e) => {
     const now = new Date();
     DomElement.statics.addMessage({
-      me: l, date: now, image: '', text: e.target.value,
+      me: l, date: now, image: l ? 'https://randomuser.me/api/portraits/women/7.jpg' : 'https://randomuser.me/api/portraits/men/3.jpg', text: e.target.value,
     });
 
     e.target.value = '';

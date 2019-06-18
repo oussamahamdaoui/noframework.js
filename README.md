@@ -88,7 +88,6 @@ const { html } = require('@forgjs/noframework');
 html`<style>
 .checkBox{
 display: inline-flex;
-width: 130px;
 padding: 3px;
 justify-content: space-evenly;
 }
@@ -99,6 +98,7 @@ height: 20px;
 background-color: #3B3A3B;
 border-radius:20px;
 position: relative;
+margin-right:20px;
 }
 
 .checkBox > .box::after{
@@ -126,24 +126,24 @@ background-color: #7D7C7D;
 const CheckBox = (value = true, label = '') => {
   let currentValue = value;
   const DomElement = html`
-    <div class="checkBox">
-      <div class="box ${value ? 'on': ''}"></div>
+    <div class="checkBox ${value ? 'on' : ''}">
+      <div class="box"></div>
       <div class="label">${label}</div>
     </div>
   `;
 
-  DomElement.events.change = () => {}
+  DomElement.events.change = () => {};
 
   DomElement.statics.toggle = () => {
     DomElement.classList.toggle('on');
     currentValue = !currentValue;
   };
 
-  
+
   DomElement.statics.getValue = () => currentValue;
 
   DomElement.addEventListener('click', () => {
-    DomElement.statics.on();
+    DomElement.statics.toggle();
     DomElement.events.change(currentValue);
   });
 
@@ -151,24 +151,25 @@ const CheckBox = (value = true, label = '') => {
   return DomElement;
 };
 
-module.exports = RadioComponent;
+module.exports = CheckBox;
 ```
 
 9. create the main fille `index.js`
 
 ```javascript
-const { $ } = require('@forgjs/noframework');
+const { $, html } = require('@forgjs/noframework');
 const CheckBox = require('./checkBoxCompoent');
 
+const checkBox = CheckBox(true, 'first component done');
 const app = html`
-  <div class="app">
-    ${CheckBox('first component done')}
+  <div id="app">
+    ${checkBox}
   </div>
 `;
 
-CheckBox.events.change = (newValue) => {
+checkBox.events.change = (newValue) => {
   console.log(newValue);
-}
+};
 
 $('body').appendChild(app);
 ```

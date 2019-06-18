@@ -45,6 +45,7 @@ const html = (text, ...stuff) => {
   }
   const ret = template.content.firstChild;
   ret.statics = {};
+  ret.events = {};
   $$('temp', ret).forEach((e) => {
     const id = parseInt(e.getAttribute('temp-id'), 10);
     const target = stuff[id];
