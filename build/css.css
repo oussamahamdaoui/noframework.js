@@ -1,0 +1,13 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  width: 1000px;
+  margin: auto;
+  padding: 25px;
+  font-family:'Helvetica Neue', sans-serif;
+}
+
