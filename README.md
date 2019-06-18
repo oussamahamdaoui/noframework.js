@@ -1,6 +1,6 @@
-# noframework.js
+# @forgjs/noframework.js
 
-noframework.js is just a file containig few helper functions to help developpers write almost vanilla javascript. The reason of this project is to make developpers understand that they dont allways need a framework and that javascript is pretty powerfull on its own. 
+@forgjs/noframework.js is just a file containig few helper functions to help developpers write almost vanilla javascript. The reason of this project is to make developpers understand that they dont allways need a framework and that javascript is pretty powerfull on its own. 
 The module is composed of one main function `html` that transforms a `String` to `Dom Element`, all the other functions are small functions to prevent you from repeting yourself.
 
 See by yourself, here are the exported functions:
@@ -42,7 +42,7 @@ Here are the 10 steps you need to follow to get started:
 
 1. create a folder for your project
 2. run  `npm init`
-3. run  `npm install noframework`
+3. run  `npm install @forgjs/noframework`
 4. run  `npm install watchify`
 5. add a watching script to `package.json`
 
@@ -59,7 +59,7 @@ Here are the 10 steps you need to follow to get started:
     "watchify": "^3.11.1"
   },
   "dependencies":{
-    "noframework": "^1.0.0"
+    "@forgjs/noframework": "^1.0.0"
   }
 }
 ```
@@ -83,7 +83,7 @@ Here are the 10 steps you need to follow to get started:
 8. create your first component `checkBoxCompoent.js`
 
 ```javascript
-const { html } = require('noframework');
+const { html } = require('@forgjs/noframework');
 
 html`<style>
 .checkBox{
@@ -157,7 +157,7 @@ module.exports = RadioComponent;
 9. create the main fille `index.js`
 
 ```javascript
-const { $ } = require('noframework');
+const { $ } = require('@forgjs/noframework');
 const CheckBox = require('./checkBoxCompoent');
 
 const app = html`
