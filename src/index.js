@@ -70,7 +70,7 @@ class EventManager {
    * @param {Function} callback
    */
 
-  unsuscribe(eventName, callback) {
+  unsubscribe(eventName, callback) {
     this.events[eventName] = this.events[eventName].filter(e => e !== callback);
   }
 
@@ -80,7 +80,7 @@ class EventManager {
    * @param {Function} callback
    */
 
-  suscribe(eventName, callback) {
+  subscribe(eventName, callback) {
     this.events[eventName] = this.events[eventName] ? this.events[eventName] : [];
     this.events[eventName].push(callback);
   }
