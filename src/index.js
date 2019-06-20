@@ -136,6 +136,14 @@ const right = only(39);
 const down = only(40);
 
 
+const inOutQuad = (n) => {
+  // eslint-disable-next-line
+  n *= 2;
+  if (n < 1) return 0.5 * n * n;
+  // eslint-disable-next-line
+  return -0.5 * (--n * (n - 2) - 1);
+};
+
 // other
 
 /**
@@ -158,6 +166,7 @@ const smoothScrollTo = (element, to, duration) => {
     t -= 1;
     return -c / 2 * (t * (t - 2) - 1) + b;
   };
+
   const animateScroll = () => {
     const currentDate = +new Date();
     const currentTime = currentDate - startDate;
@@ -171,6 +180,41 @@ const smoothScrollTo = (element, to, duration) => {
     }
   };
   animateScroll();
+};
+
+/**
+ *
+ * @param {Number} from
+ * @param {Number} to
+ * @param {Number} duration in ms
+ * @param {Function} callback function to call on each frame
+ * @param {*} easeFunction default inOutQuad
+ */
+
+const startAnimation = (
+  from = 20,
+  to = 300,
+  duration = 1000,
+  callback,
+  easeFunction = inOutQuad,
+) => {
+  let stop = false;
+  let start = null;
+  const draw = (now) => {
+    if (stop) return;
+    if (now - start >= duration) stop = true;
+    const p = (now - start) / duration;
+    const val = easeFunction(p);
+    const x = from + (to - from) * val;
+    callback(x);
+    requestAnimationFrame(draw);
+  };
+  const startAnim = (timeStamp) => {
+    start = timeStamp;
+    draw(timeStamp);
+  };
+
+  requestAnimationFrame(startAnim);
 };
 
 // Date
@@ -226,5 +270,9 @@ module.exports = {
   DATE: {
     sameDay,
     getDaysInMonth,
+  },
+  startAnimation,
+  ANIMATION_FUNCTIONS: {
+    inOutQuad,
   },
 };

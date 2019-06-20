@@ -86,13 +86,22 @@ const Calendar = () => {
 
 html`
 <style>
+  .calendar {
+    width:280px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    padding:15px;
+    border-radius:3px;
+  }
   .calendar .header{
     display:flex;
+    border-bottom:1px solid #C3C2C8;
+    margin-bottom:2px;
   }
 
   .calendar .header>.currentDate {
     flex:1;
     text-align:center;
+    padding-bottom:5px;
   }
 
   .calendar .weekdays {

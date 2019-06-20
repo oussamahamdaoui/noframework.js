@@ -10,6 +10,7 @@ const MultySelectColor = require('./components/multiSelectColor');
 const ChatComponent = require('./components/chatComponent');
 const Calendar = require('./components/calendar');
 const ProgressCircle = require('./components/progressCircle');
+const LoaderBar = require('./components/loaderBar');
 
 
 const app = $('#app');
@@ -28,8 +29,9 @@ app.appendChild(StoryPage('To Do list exemple', ToDoList()));
 app.appendChild(StoryPage('Chat Component', ChatComponent()));
 app.appendChild(StoryPage('Calendar', Calendar()));
 app.appendChild(StoryPage('Circle Progress', ProgressCircle()));
+app.appendChild(StoryPage('Loader Bar', LoaderBar(76)));
 
-},{"../src/index":11,"./components/calendar":2,"./components/chatComponent":3,"./components/componentNumber":4,"./components/componentRadio":5,"./components/multiSelectColor":6,"./components/progressCircle":7,"./components/radioContainer":8,"./components/storyPage":9,"./components/todoList":10}],2:[function(require,module,exports){
+},{"../src/index":12,"./components/calendar":2,"./components/chatComponent":3,"./components/componentNumber":4,"./components/componentRadio":5,"./components/loaderBar":6,"./components/multiSelectColor":7,"./components/progressCircle":8,"./components/radioContainer":9,"./components/storyPage":10,"./components/todoList":11}],2:[function(require,module,exports){
 const {
   html, $, DATE: {
     sameDay,
@@ -118,13 +120,22 @@ const Calendar = () => {
 
 html`
 <style>
+  .calendar {
+    width:280px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    padding:15px;
+    border-radius:3px;
+  }
   .calendar .header{
     display:flex;
+    border-bottom:1px solid #C3C2C8;
+    margin-bottom:2px;
   }
 
   .calendar .header>.currentDate {
     flex:1;
     text-align:center;
+    padding-bottom:5px;
   }
 
   .calendar .weekdays {
@@ -165,7 +176,7 @@ html`
 
 module.exports = Calendar;
 
-},{"../../src/index":11}],3:[function(require,module,exports){
+},{"../../src/index":12}],3:[function(require,module,exports){
 const {
   html, $, KEYS: { enter }, smoothScrollTo,
 } = require('../../src');
@@ -306,7 +317,7 @@ const ChatComponent = (messagesList = []) => {
 
 module.exports = ChatComponent;
 
-},{"../../src":11}],4:[function(require,module,exports){
+},{"../../src":12}],4:[function(require,module,exports){
 const { html, $ } = require('../../src');
 
 html`
@@ -407,7 +418,7 @@ const NumberComponent = (
 
 module.exports = NumberComponent;
 
-},{"../../src":11}],5:[function(require,module,exports){
+},{"../../src":12}],5:[function(require,module,exports){
 const { html } = require('../../src');
 
 html`<style>
@@ -485,7 +496,78 @@ const RadioComponent = (value = true, label = '') => {
 
 module.exports = RadioComponent;
 
-},{"../../src":11}],6:[function(require,module,exports){
+},{"../../src":12}],6:[function(require,module,exports){
+const {
+  html, $, startAnimation,
+} = require('../../src');
+
+
+const LoaderBar = (percent) => {
+  const DomElement = html`
+  <div class="loader">
+    <div class="loaderBar">
+      <div class="bar-percent" style="width:${percent}%"></div>
+    </div>
+    <div class="label">${percent}%</div>
+  </div>
+  `;
+  DomElement.statics.percent = percent;
+  DomElement.events.cahnge = () => {};
+
+  $('.loaderBar', DomElement).addEventListener('click', (e) => {
+    DomElement.statics.setPersent((e.layerX / $('.loaderBar', DomElement).clientWidth) * 100);
+  });
+
+  DomElement.statics.setPersent = (p) => {
+    DomElement.statics.percent = p;
+    $('.bar-percent', DomElement).style.width = `${p}%`;
+
+    startAnimation(
+      parseInt($('.label', DomElement).innerHTML, 10),
+      p,
+      200,
+      (x) => {
+        $('.label', DomElement).innerHTML = `${parseInt(x, 10)}%`;
+      },
+    );
+
+    DomElement.events.cahnge(p);
+  };
+
+  return DomElement;
+};
+
+
+html`
+<style>
+.loaderBar{
+  height:10px;
+  background-color:#3B3A3B;
+  border-radius:10px;
+  position:relative;
+  overflow:hidden;
+}
+.loaderBar > .bar-percent {
+  position:absolute;
+  left:0px;
+  top:0px;
+  background-color:#7D7C7D;
+  height:10px;
+  border-radius:10px;
+  transition: width 200ms ease-in-out;
+}
+
+.loader > .label {
+  text-align:center;
+}
+
+
+</style>
+`;
+
+module.exports = LoaderBar;
+
+},{"../../src":12}],7:[function(require,module,exports){
 const { html, $ } = require('../../src');
 
 html`
@@ -574,7 +656,7 @@ const MultiSelectColor = (values = []) => {
 
 module.exports = MultiSelectColor;
 
-},{"../../src":11}],7:[function(require,module,exports){
+},{"../../src":12}],8:[function(require,module,exports){
 const { html, $ } = require('../../src');
 
 const ProgressCircle = (radius = 60, stroke = 4, color = '#7D7C7D', startPercent = 80) => {
@@ -636,7 +718,7 @@ html`
 
 module.exports = ProgressCircle;
 
-},{"../../src":11}],8:[function(require,module,exports){
+},{"../../src":12}],9:[function(require,module,exports){
 const { html } = require('../../src');
 const RadioComponent = require('./componentRadio');
 
@@ -675,7 +757,7 @@ const RadioContainer = (labels, selectedIndex) => {
 
 module.exports = RadioContainer;
 
-},{"../../src":11,"./componentRadio":5}],9:[function(require,module,exports){
+},{"../../src":12,"./componentRadio":5}],10:[function(require,module,exports){
 const { html } = require('../../src');
 
 html`
@@ -702,7 +784,7 @@ const StoryPage = (title, element) => {
 
 module.exports = StoryPage;
 
-},{"../../src":11}],10:[function(require,module,exports){
+},{"../../src":12}],11:[function(require,module,exports){
 const { html, $, KEYS: { enter } } = require('../../src');
 const RadioContainer = require('./radioContainer');
 const MultiSelectColor = require('./multiSelectColor');
@@ -909,7 +991,7 @@ const ToDoList = () => {
 
 module.exports = ToDoList;
 
-},{"../../src":11,"./multiSelectColor":6,"./radioContainer":8}],11:[function(require,module,exports){
+},{"../../src":12,"./multiSelectColor":7,"./radioContainer":9}],12:[function(require,module,exports){
 // Selectors
 
 /**
@@ -982,7 +1064,7 @@ class EventManager {
    * @param {Function} callback
    */
 
-  unsuscribe(eventName, callback) {
+  unsubscribe(eventName, callback) {
     this.events[eventName] = this.events[eventName].filter(e => e !== callback);
   }
 
@@ -992,7 +1074,7 @@ class EventManager {
    * @param {Function} callback
    */
 
-  suscribe(eventName, callback) {
+  subscribe(eventName, callback) {
     this.events[eventName] = this.events[eventName] ? this.events[eventName] : [];
     this.events[eventName].push(callback);
   }
@@ -1048,6 +1130,14 @@ const right = only(39);
 const down = only(40);
 
 
+const inOutQuad = (n) => {
+  // eslint-disable-next-line
+  n *= 2;
+  if (n < 1) return 0.5 * n * n;
+  // eslint-disable-next-line
+  return -0.5 * (--n * (n - 2) - 1);
+};
+
 // other
 
 /**
@@ -1070,6 +1160,7 @@ const smoothScrollTo = (element, to, duration) => {
     t -= 1;
     return -c / 2 * (t * (t - 2) - 1) + b;
   };
+
   const animateScroll = () => {
     const currentDate = +new Date();
     const currentTime = currentDate - startDate;
@@ -1083,6 +1174,41 @@ const smoothScrollTo = (element, to, duration) => {
     }
   };
   animateScroll();
+};
+
+/**
+ *
+ * @param {Number} from
+ * @param {Number} to
+ * @param {Number} duration in ms
+ * @param {Function} callback function to call on each frame
+ * @param {*} easeFunction default inOutQuad
+ */
+
+const startAnimation = (
+  from = 20,
+  to = 300,
+  duration = 1000,
+  callback,
+  easeFunction = inOutQuad,
+) => {
+  let stop = false;
+  let start = null;
+  const draw = (now) => {
+    if (stop) return;
+    if (now - start >= duration) stop = true;
+    const p = (now - start) / duration;
+    const val = easeFunction(p);
+    const x = from + (to - from) * val;
+    callback(x);
+    requestAnimationFrame(draw);
+  };
+  const startAnim = (timeStamp) => {
+    start = timeStamp;
+    draw(timeStamp);
+  };
+
+  requestAnimationFrame(startAnim);
 };
 
 // Date
@@ -1138,6 +1264,10 @@ module.exports = {
   DATE: {
     sameDay,
     getDaysInMonth,
+  },
+  startAnimation,
+  ANIMATION_FUNCTIONS: {
+    inOutQuad,
   },
 };
 

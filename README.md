@@ -29,12 +29,18 @@ module.exports = {
     sameDay, // are two dates the same day
     getDaysInMonth, // get a list of days in month
   },
+  startAnimation, // Animation function
+  ANIMATION_FUNCTIONS: {
+    inOutQuad,
+  },
 };
 ```
 
 That's all what it is, a single file undestendable by any one with basic javascript knowledge.
 
 This is documentation is a good tutorial to teach devs to set up their developpment environment, and make them understand what really happens when they use a pre-configured tools like `create-react-app`, thats why it goes trough all the configuration.
+
+You can see some examples live [here](https://oussamahamdaoui.github.io/noframework.js/build/)
 
 ## Getting started 🛠
 
