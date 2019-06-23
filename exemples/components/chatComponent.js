@@ -53,12 +53,15 @@ html`
   .messages .userImage {
     width:50px;
     height:50px;
-    background-color:blue;
     border-radius:50px;
     margin-left:25px;
     margin-right:25px;
     background-position:center;
     background-size:cover;
+    text-align:center;
+    background-color:#1F2325;
+    line-height:50px;
+    font-size:20px;
   }
 
   .messages .text {
@@ -88,7 +91,7 @@ const Message = (text, time, lr, image) => {
   const DomElement = html`
   <div class="message ${lr}">
     <div class="data">
-      <div class="userImage" style="background-image:url(${image})"></div>
+      <div class="userImage" style="background-image:url(${image})"><i class="icofont-ui-user"></i></div>
       <div class="time">${time}</div>
     </div>
     <div class="text">${text}</div>

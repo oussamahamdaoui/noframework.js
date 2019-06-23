@@ -11,13 +11,15 @@ const ChatComponent = require('./components/chatComponent');
 const Calendar = require('./components/calendar');
 const ProgressCircle = require('./components/progressCircle');
 const LoaderBar = require('./components/loaderBar');
+const Header = require('./components/header');
 
 
 const app = $('#app');
-app.appendChild(StoryPage('Number Component', NumberComponent()));
+app.appendChild(Header());
+app.appendChild(StoryPage('Number Component - click to choose your number', NumberComponent()));
 app.appendChild(StoryPage('Radio', RadioComponent(false, 'Selected')));
 app.appendChild(StoryPage('Radio Container', RadioContainer(['a', 'b', 'c'], 0)));
-app.appendChild(StoryPage('Multy select colors', MultySelectColor(
+app.appendChild(StoryPage('Multy select colors - click on the circle', MultySelectColor(
   [
     { class: 'type1', label: 'Work' },
     { class: 'type2', label: 'Hobby' },
@@ -26,12 +28,12 @@ app.appendChild(StoryPage('Multy select colors', MultySelectColor(
   ],
 )));
 app.appendChild(StoryPage('To Do list exemple', ToDoList()));
-app.appendChild(StoryPage('Chat Component', ChatComponent()));
+app.appendChild(StoryPage('Chat Component - type anything and see what happens', ChatComponent()));
 app.appendChild(StoryPage('Calendar', Calendar()));
 app.appendChild(StoryPage('Circle Progress', ProgressCircle()));
-app.appendChild(StoryPage('Loader Bar', LoaderBar(76)));
+app.appendChild(StoryPage('Loader Bar - click on the bar to see the animation', LoaderBar(76)));
 
-},{"../src/index":12,"./components/calendar":2,"./components/chatComponent":3,"./components/componentNumber":4,"./components/componentRadio":5,"./components/loaderBar":6,"./components/multiSelectColor":7,"./components/progressCircle":8,"./components/radioContainer":9,"./components/storyPage":10,"./components/todoList":11}],2:[function(require,module,exports){
+},{"../src/index":13,"./components/calendar":2,"./components/chatComponent":3,"./components/componentNumber":4,"./components/componentRadio":5,"./components/header":6,"./components/loaderBar":7,"./components/multiSelectColor":8,"./components/progressCircle":9,"./components/radioContainer":10,"./components/storyPage":11,"./components/todoList":12}],2:[function(require,module,exports){
 const {
   html, $, DATE: {
     sameDay,
@@ -122,9 +124,11 @@ html`
 <style>
   .calendar {
     width:280px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    box-shadow: 0 1px 3px rgba(0,0,0,1), 0 1px 2px rgba(0,0,0,1);
     padding:15px;
     border-radius:3px;
+    background-color:white;
+    color:#121416;
   }
   .calendar .header{
     display:flex;
@@ -176,7 +180,7 @@ html`
 
 module.exports = Calendar;
 
-},{"../../src/index":12}],3:[function(require,module,exports){
+},{"../../src/index":13}],3:[function(require,module,exports){
 const {
   html, $, KEYS: { enter }, smoothScrollTo,
 } = require('../../src');
@@ -232,12 +236,15 @@ html`
   .messages .userImage {
     width:50px;
     height:50px;
-    background-color:blue;
     border-radius:50px;
     margin-left:25px;
     margin-right:25px;
     background-position:center;
     background-size:cover;
+    text-align:center;
+    background-color:#1F2325;
+    line-height:50px;
+    font-size:20px;
   }
 
   .messages .text {
@@ -267,7 +274,7 @@ const Message = (text, time, lr, image) => {
   const DomElement = html`
   <div class="message ${lr}">
     <div class="data">
-      <div class="userImage" style="background-image:url(${image})"></div>
+      <div class="userImage" style="background-image:url(${image})"><i class="icofont-ui-user"></i></div>
       <div class="time">${time}</div>
     </div>
     <div class="text">${text}</div>
@@ -317,7 +324,7 @@ const ChatComponent = (messagesList = []) => {
 
 module.exports = ChatComponent;
 
-},{"../../src":12}],4:[function(require,module,exports){
+},{"../../src":13}],4:[function(require,module,exports){
 const { html, $ } = require('../../src');
 
 html`
@@ -418,7 +425,7 @@ const NumberComponent = (
 
 module.exports = NumberComponent;
 
-},{"../../src":12}],5:[function(require,module,exports){
+},{"../../src":13}],5:[function(require,module,exports){
 const { html } = require('../../src');
 
 html`<style>
@@ -496,7 +503,49 @@ const RadioComponent = (value = true, label = '') => {
 
 module.exports = RadioComponent;
 
-},{"../../src":12}],6:[function(require,module,exports){
+},{"../../src":13}],6:[function(require,module,exports){
+const { html } = require('../../src');
+
+const Header = () => {
+  const DomElement = html`
+    <div class="Header">
+      <div>noframework.js</div>
+      <div><a href="https://github.com/oussamahamdaoui/noframework.js">See it on github</a></div>
+    </div>
+  `;
+
+  return DomElement;
+};
+
+html`
+<style>
+  .Header {
+    width:100%;
+    position:relative;
+    display:flex;
+    background-color:#1F2325;
+    height:70px;
+    justify-content: space-between;
+    position:sticky;
+    top:0;
+    z-index:99;
+  }
+
+  .Header > div {
+    line-height:70px;
+    margin-left:30px;
+    margin-right:30px;
+  }
+
+  a {
+
+  }
+</style>
+`;
+
+module.exports = Header;
+
+},{"../../src":13}],7:[function(require,module,exports){
 const {
   html, $, startAnimation,
 } = require('../../src');
@@ -567,7 +616,7 @@ html`
 
 module.exports = LoaderBar;
 
-},{"../../src":12}],7:[function(require,module,exports){
+},{"../../src":13}],8:[function(require,module,exports){
 const { html, $ } = require('../../src');
 
 html`
@@ -656,7 +705,7 @@ const MultiSelectColor = (values = []) => {
 
 module.exports = MultiSelectColor;
 
-},{"../../src":12}],8:[function(require,module,exports){
+},{"../../src":13}],9:[function(require,module,exports){
 const { html, $ } = require('../../src');
 
 const ProgressCircle = (radius = 60, stroke = 4, color = '#7D7C7D', startPercent = 80) => {
@@ -718,7 +767,7 @@ html`
 
 module.exports = ProgressCircle;
 
-},{"../../src":12}],9:[function(require,module,exports){
+},{"../../src":13}],10:[function(require,module,exports){
 const { html } = require('../../src');
 const RadioComponent = require('./componentRadio');
 
@@ -757,7 +806,7 @@ const RadioContainer = (labels, selectedIndex) => {
 
 module.exports = RadioContainer;
 
-},{"../../src":12,"./componentRadio":5}],10:[function(require,module,exports){
+},{"../../src":13,"./componentRadio":5}],11:[function(require,module,exports){
 const { html } = require('../../src');
 
 html`
@@ -784,7 +833,7 @@ const StoryPage = (title, element) => {
 
 module.exports = StoryPage;
 
-},{"../../src":12}],11:[function(require,module,exports){
+},{"../../src":13}],12:[function(require,module,exports){
 const { html, $, KEYS: { enter } } = require('../../src');
 const RadioContainer = require('./radioContainer');
 const MultiSelectColor = require('./multiSelectColor');
@@ -804,9 +853,6 @@ html`
   }
 
   .todoList .header {
-    border-bottom:1px solid #7D7C7D;
-    border-top:1px solid #7D7C7D;
-
     display:flex;
   }
 
@@ -829,6 +875,7 @@ html`
     padding:20px;
     border:none;
     flex:1;
+    margin-left:15px;
   }
   .todo {
     padding-left:25px;
@@ -991,7 +1038,7 @@ const ToDoList = () => {
 
 module.exports = ToDoList;
 
-},{"../../src":12,"./multiSelectColor":7,"./radioContainer":9}],12:[function(require,module,exports){
+},{"../../src":13,"./multiSelectColor":8,"./radioContainer":10}],13:[function(require,module,exports){
 // Selectors
 
 /**
@@ -1011,7 +1058,13 @@ const $ = (selector, element = document) => element.querySelector(selector);
  *
  * @return {NodeList}
  */
-const $$ = (selector, element = document) => Array.from(element.querySelectorAll(selector));
+const $$ = (selector, element = document) => {
+  const ret = Array.from(element.querySelectorAll(selector));
+  ret.addEventListener = (...params) => {
+    ret.forEach(e => e.addEventListener(params));
+  };
+  return ret;
+};
 
 
 // templating

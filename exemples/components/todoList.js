@@ -17,9 +17,6 @@ html`
   }
 
   .todoList .header {
-    border-bottom:1px solid #7D7C7D;
-    border-top:1px solid #7D7C7D;
-
     display:flex;
   }
 
@@ -42,6 +39,7 @@ html`
     padding:20px;
     border:none;
     flex:1;
+    margin-left:15px;
   }
   .todo {
     padding-left:25px;

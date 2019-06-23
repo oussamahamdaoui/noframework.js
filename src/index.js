@@ -17,7 +17,13 @@ const $ = (selector, element = document) => element.querySelector(selector);
  *
  * @return {NodeList}
  */
-const $$ = (selector, element = document) => Array.from(element.querySelectorAll(selector));
+const $$ = (selector, element = document) => {
+  const ret = Array.from(element.querySelectorAll(selector));
+  ret.addEventListener = (...params) => {
+    ret.forEach(e => e.addEventListener(params));
+  };
+  return ret;
+};
 
 
 // templating

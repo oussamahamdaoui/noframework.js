@@ -4,11 +4,24 @@
   box-sizing: border-box;
 }
 
+:root{
+  --blue: #3398DB;
+  --grey1: #7D7C7D;
+  --grey2:#666566;
+  --red: #E84C3C; 
+}
+
 body{
-  width: 1000px;
   margin: auto;
   padding: 25px;
   font-family:'Helvetica Neue', sans-serif;
-  background-color: #FDFDFD;
+  background-color: #121416;
+  color:rgb(250, 250, 250);
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color:rgb(250, 250, 250);
 }
 
