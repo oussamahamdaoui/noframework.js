@@ -33,7 +33,25 @@ app.appendChild(StoryPage('Calendar', Calendar()));
 app.appendChild(StoryPage('Circle Progress', ProgressCircle()));
 app.appendChild(StoryPage('Loader Bar - click on the bar to see the animation', LoaderBar(76)));
 
-},{"../src/index":13,"./components/calendar":2,"./components/chatComponent":3,"./components/componentNumber":4,"./components/componentRadio":5,"./components/header":6,"./components/loaderBar":7,"./components/multiSelectColor":8,"./components/progressCircle":9,"./components/radioContainer":10,"./components/storyPage":11,"./components/todoList":12}],2:[function(require,module,exports){
+},{"../src/index":14,"./components/calendar":3,"./components/chatComponent":4,"./components/componentNumber":5,"./components/componentRadio":6,"./components/header":7,"./components/loaderBar":8,"./components/multiSelectColor":9,"./components/progressCircle":10,"./components/radioContainer":11,"./components/storyPage":12,"./components/todoList":13}],2:[function(require,module,exports){
+const { html } = require('../../src');
+
+const AudioMessage = (time, audio, image, lr) => {
+  const DomElement = html`
+  <div class="message ${lr}">
+    <div class="data">
+      <div class="userImage" style="background-image:url(${image})"><i class="icofont-ui-user"></i></div>
+      <div class="time">${time}</div>
+    </div>
+    <div class="audio"></div>
+  </div>`;
+
+  return DomElement;
+};
+
+module.exports = AudioMessage;
+
+},{"../../src":14}],3:[function(require,module,exports){
 const {
   html, $, DATE: {
     sameDay,
@@ -180,11 +198,12 @@ html`
 
 module.exports = Calendar;
 
-},{"../../src/index":13}],3:[function(require,module,exports){
+},{"../../src/index":14}],4:[function(require,module,exports){
 const {
   html, $, KEYS: { enter }, smoothScrollTo,
 } = require('../../src');
 
+const AudioMessage = require('./audio');
 
 let l = true;
 html`
@@ -286,6 +305,7 @@ const ChatComponent = (messagesList = []) => {
   const DomElement = html`
     <div class="chat">
       <div class="messages">
+        ${AudioMessage()}
       </div>
       <div class="toolbar">
         <input type="text" class="text" placeholder="Type message here...">
@@ -324,7 +344,7 @@ const ChatComponent = (messagesList = []) => {
 
 module.exports = ChatComponent;
 
-},{"../../src":13}],4:[function(require,module,exports){
+},{"../../src":14,"./audio":2}],5:[function(require,module,exports){
 const { html, $ } = require('../../src');
 
 html`
@@ -425,7 +445,7 @@ const NumberComponent = (
 
 module.exports = NumberComponent;
 
-},{"../../src":13}],5:[function(require,module,exports){
+},{"../../src":14}],6:[function(require,module,exports){
 const { html } = require('../../src');
 
 html`<style>
@@ -503,7 +523,7 @@ const RadioComponent = (value = true, label = '') => {
 
 module.exports = RadioComponent;
 
-},{"../../src":13}],6:[function(require,module,exports){
+},{"../../src":14}],7:[function(require,module,exports){
 const { html } = require('../../src');
 
 const Header = () => {
@@ -545,7 +565,7 @@ html`
 
 module.exports = Header;
 
-},{"../../src":13}],7:[function(require,module,exports){
+},{"../../src":14}],8:[function(require,module,exports){
 const {
   html, $, startAnimation,
 } = require('../../src');
@@ -616,7 +636,7 @@ html`
 
 module.exports = LoaderBar;
 
-},{"../../src":13}],8:[function(require,module,exports){
+},{"../../src":14}],9:[function(require,module,exports){
 const { html, $ } = require('../../src');
 
 html`
@@ -705,7 +725,7 @@ const MultiSelectColor = (values = []) => {
 
 module.exports = MultiSelectColor;
 
-},{"../../src":13}],9:[function(require,module,exports){
+},{"../../src":14}],10:[function(require,module,exports){
 const { html, $ } = require('../../src');
 
 const ProgressCircle = (radius = 60, stroke = 4, color = '#7D7C7D', startPercent = 80) => {
@@ -758,7 +778,7 @@ html`
   position:relative;
 }
 .progress-ring > circle {
-  transition: stroke-dashoffset 0.35s;
+  transition: stroke-dashoffset 200ms;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
 }
@@ -767,7 +787,7 @@ html`
 
 module.exports = ProgressCircle;
 
-},{"../../src":13}],10:[function(require,module,exports){
+},{"../../src":14}],11:[function(require,module,exports){
 const { html } = require('../../src');
 const RadioComponent = require('./componentRadio');
 
@@ -806,7 +826,7 @@ const RadioContainer = (labels, selectedIndex) => {
 
 module.exports = RadioContainer;
 
-},{"../../src":13,"./componentRadio":5}],11:[function(require,module,exports){
+},{"../../src":14,"./componentRadio":6}],12:[function(require,module,exports){
 const { html } = require('../../src');
 
 html`
@@ -833,7 +853,7 @@ const StoryPage = (title, element) => {
 
 module.exports = StoryPage;
 
-},{"../../src":13}],12:[function(require,module,exports){
+},{"../../src":14}],13:[function(require,module,exports){
 const { html, $, KEYS: { enter } } = require('../../src');
 const RadioContainer = require('./radioContainer');
 const MultiSelectColor = require('./multiSelectColor');
@@ -1038,7 +1058,7 @@ const ToDoList = () => {
 
 module.exports = ToDoList;
 
-},{"../../src":13,"./multiSelectColor":8,"./radioContainer":10}],13:[function(require,module,exports){
+},{"../../src":14,"./multiSelectColor":9,"./radioContainer":11}],14:[function(require,module,exports){
 // Selectors
 
 /**

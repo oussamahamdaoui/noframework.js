@@ -2,6 +2,7 @@ const {
   html, $, KEYS: { enter }, smoothScrollTo,
 } = require('../../src');
 
+const AudioMessage = require('./audio');
 
 let l = true;
 html`
@@ -103,6 +104,7 @@ const ChatComponent = (messagesList = []) => {
   const DomElement = html`
     <div class="chat">
       <div class="messages">
+        ${AudioMessage()}
       </div>
       <div class="toolbar">
         <input type="text" class="text" placeholder="Type message here...">

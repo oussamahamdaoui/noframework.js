@@ -28,6 +28,10 @@ const $$ = (selector, element = document) => {
 
 // templating
 
+const allNodes = arr => Array.isArray(arr)
+&& arr.reduce((acc, current) => acc && current instanceof Node);
+
+
 /**
  *
  * @param {String} text
@@ -37,12 +41,15 @@ const $$ = (selector, element = document) => {
 const html = (text, ...stuff) => {
   let ht = '';
   text.forEach((part, index) => {
-    if (!(stuff[index] instanceof Node)) {
+    if (allNodes(stuff[index])) {
+      ht += part + stuff[index].map((e, i) => `<temp temp-id='${index}' arr-id="${i}"></temp>`).join('');
+    } else if (!(stuff[index] instanceof Node)) {
       ht += stuff[index] ? part + stuff[index] : part;
     } else {
       ht += stuff[index] ? `${part}<temp temp-id='${index}'></temp>` : part;
     }
   });
+
   const template = document.createElement('template');
   template.innerHTML = ht.trim();
   const style = $('style', template.content);
@@ -54,8 +61,9 @@ const html = (text, ...stuff) => {
   ret.events = {};
   $$('temp', ret).forEach((e) => {
     const id = parseInt(e.getAttribute('temp-id'), 10);
-    const target = stuff[id];
-    e.parentNode.replaceChild(target, e);
+    const arrId = parseInt(e.getAttribute('arr-id'), 10);
+    const target = stuff[id][arrId] ? stuff[id][arrId] : stuff[id];
+    e.parentElement.replaceChild(target, e);
   });
   return ret;
 };

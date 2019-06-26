@@ -50,7 +50,7 @@ html`
   position:relative;
 }
 .progress-ring > circle {
-  transition: stroke-dashoffset 0.35s;
+  transition: stroke-dashoffset 200ms;
   transform: rotate(-90deg);
   transform-origin: 50% 50%;
 }
