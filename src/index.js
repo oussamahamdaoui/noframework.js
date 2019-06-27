@@ -29,7 +29,7 @@ const $$ = (selector, element = document) => {
 // templating
 
 const allNodes = arr => Array.isArray(arr)
-&& arr.reduce((acc, current) => acc && current instanceof Node);
+&& arr.reduce((acc, current) => acc && current instanceof Node, true);
 
 
 /**
