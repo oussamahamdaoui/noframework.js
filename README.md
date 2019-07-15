@@ -1,7 +1,7 @@
 # @forgjs/noframework.js
 
-@forgjs/noframework.js is just a file containig few helper functions to help developpers write almost vanilla javascript. The reason of this project is to make developpers understand that they dont allways need a framework and that javascript is pretty powerfull on its own. 
-The module is composed of one main function `html` that transforms a `String` to `Dom Element`, all the other functions are small functions to prevent you from repeting yourself.
+@forgjs/noframework.js is just a file containig a few helper functions to help developpers write almost vanilla javascript. The reason of this project is to make developpers understand that they don't always need a framework and that javascript is pretty powerful on its own. 
+The module is composed of one main function `html` that transforms a `String` to `Dom Element`, all the other functions are small functions to prevent you from repeating yourself.
 
 See by yourself, here are the exported functions:
 ```javascript
@@ -36,9 +36,9 @@ module.exports = {
 };
 ```
 
-That's all what it is, a single file undestendable by any one with basic javascript knowledge.
+That's all what it is, a single file undestandable by anyone with basic javascript knowledge.
 
-This is documentation is a good tutorial to teach devs to set up their developpment environment, and make them understand what really happens when they use a pre-configured tools like `create-react-app`, thats why it goes trough all the configuration.
+This is documentation is a good tutorial to teach devs how to set up their developpment environment, and make them understand what really happens when they use pre-configured tools like `create-react-app`, thats why it goes trough all the configuration.
 
 You can see some examples live [here](https://oussamahamdaoui.github.io/noframework.js/build/)
 
@@ -160,7 +160,7 @@ const CheckBox = (value = true, label = '') => {
 module.exports = CheckBox;
 ```
 
-10. create the main fille `index.js`
+10. create the main file `index.js`
 
 ```javascript
 const { $, html } = require('@forgjs/noframework');
@@ -201,8 +201,8 @@ Some tips:
 - If you are using Visual Studio you should install the Live Server extension to be able to reload the page on every change, just open the `buil/index.html` file with it (press `Ctrl-Shift-P` and type `Open with Live Server`).
 - Also you can install es6-string-html to get sytax coloration for the html in your javascript
 
-## Whats next
+## What's next
 
-You can see the exemples present in the `exemples` folder, then actually learn javascript without frameworks. And if you need more info just reed the code (its just one file im sure you can do that 👍)
+You can see the examples present in the `exemples` folder, then actually learn javascript without frameworks. And if you need more info just reed the code (its just one file im sure you can do that 👍)
 
 Happy coding.
