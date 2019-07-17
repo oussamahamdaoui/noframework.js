@@ -1,6 +1,5 @@
 const { $ } = require('../src/index');
 const StoryPage = require('./components/storyPage');
-
 const NumberComponent = require('./components/componentNumber');
 const RadioComponent = require('./components/componentRadio');
 const RadioContainer = require('./components/radioContainer');
@@ -11,6 +10,8 @@ const Calendar = require('./components/calendar');
 const ProgressCircle = require('./components/progressCircle');
 const LoaderBar = require('./components/loaderBar');
 const Header = require('./components/header');
+const Notification = require('./components/Notification');
+const NotificationsManager = require('./components/NotificationManager');
 
 
 const app = $('#app');
@@ -31,3 +32,10 @@ app.appendChild(StoryPage('Chat Component - type anything and see what happens',
 app.appendChild(StoryPage('Calendar', Calendar()));
 app.appendChild(StoryPage('Circle Progress', ProgressCircle()));
 app.appendChild(StoryPage('Loader Bar - click on the bar to see the animation', LoaderBar(76)));
+
+
+NotificationsManager.subscribe('notification', (title, text, logo) => {
+  const notification = Notification(title, text, logo);
+  console.log(notification);
+  app.appendChild(notification);
+});

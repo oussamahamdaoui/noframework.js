@@ -1,7 +1,6 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 const { $ } = require('../src/index');
 const StoryPage = require('./components/storyPage');
-
 const NumberComponent = require('./components/componentNumber');
 const RadioComponent = require('./components/componentRadio');
 const RadioContainer = require('./components/radioContainer');
@@ -12,6 +11,8 @@ const Calendar = require('./components/calendar');
 const ProgressCircle = require('./components/progressCircle');
 const LoaderBar = require('./components/loaderBar');
 const Header = require('./components/header');
+const Notification = require('./components/Notification');
+const NotificationsManager = require('./components/NotificationManager');
 
 
 const app = $('#app');
@@ -33,7 +34,56 @@ app.appendChild(StoryPage('Calendar', Calendar()));
 app.appendChild(StoryPage('Circle Progress', ProgressCircle()));
 app.appendChild(StoryPage('Loader Bar - click on the bar to see the animation', LoaderBar(76)));
 
-},{"../src/index":14,"./components/calendar":3,"./components/chatComponent":4,"./components/componentNumber":5,"./components/componentRadio":6,"./components/header":7,"./components/loaderBar":8,"./components/multiSelectColor":9,"./components/progressCircle":10,"./components/radioContainer":11,"./components/storyPage":12,"./components/todoList":13}],2:[function(require,module,exports){
+
+NotificationsManager.subscribe('notification', (title, text, logo) => {
+  const notification = Notification(title, text, logo);
+  console.log(notification);
+  app.appendChild(notification);
+});
+
+},{"../src/index":16,"./components/Notification":2,"./components/NotificationManager":3,"./components/calendar":5,"./components/chatComponent":6,"./components/componentNumber":7,"./components/componentRadio":8,"./components/header":9,"./components/loaderBar":10,"./components/multiSelectColor":11,"./components/progressCircle":12,"./components/radioContainer":13,"./components/storyPage":14,"./components/todoList":15}],2:[function(require,module,exports){
+const { html } = require('../../src/index');
+
+const Notification = (title, text, logo) => {
+  const DomElement = html`
+    <div class="notification">
+      <h2>${title}</h2>
+      <i class="${logo}"></i>
+      <p>
+        ${text}
+      </p>
+      </div>
+  `;
+
+  // setTimeout(() => {
+  //   DomElement.parentElement.removeChild(DomElement);
+  // }, 1000);
+
+  return DomElement;
+};
+
+html`
+<style>
+.notification{
+  position:fixed;
+  top:0px;
+  right:0px;
+  width:280px;
+  background-color:white;
+  z-index:1000;
+  height:110px;
+}
+</style>
+`;
+
+module.exports = Notification;
+
+},{"../../src/index":16}],3:[function(require,module,exports){
+const { EventManager } = require('../../src/index');
+
+module.exports = new EventManager();
+
+},{"../../src/index":16}],4:[function(require,module,exports){
 const { html } = require('../../src');
 
 const AudioMessage = (time, audio, image, lr) => {
@@ -51,7 +101,7 @@ const AudioMessage = (time, audio, image, lr) => {
 
 module.exports = AudioMessage;
 
-},{"../../src":14}],3:[function(require,module,exports){
+},{"../../src":16}],5:[function(require,module,exports){
 const {
   html, $, DATE: {
     sameDay,
@@ -198,7 +248,7 @@ html`
 
 module.exports = Calendar;
 
-},{"../../src/index":14}],4:[function(require,module,exports){
+},{"../../src/index":16}],6:[function(require,module,exports){
 const {
   html, $, KEYS: { enter }, smoothScrollTo,
 } = require('../../src');
@@ -344,7 +394,7 @@ const ChatComponent = (messagesList = []) => {
 
 module.exports = ChatComponent;
 
-},{"../../src":14,"./audio":2}],5:[function(require,module,exports){
+},{"../../src":16,"./audio":4}],7:[function(require,module,exports){
 const { html, $ } = require('../../src');
 
 html`
@@ -445,7 +495,7 @@ const NumberComponent = (
 
 module.exports = NumberComponent;
 
-},{"../../src":14}],6:[function(require,module,exports){
+},{"../../src":16}],8:[function(require,module,exports){
 const { html } = require('../../src');
 
 html`<style>
@@ -523,7 +573,7 @@ const RadioComponent = (value = true, label = '') => {
 
 module.exports = RadioComponent;
 
-},{"../../src":14}],7:[function(require,module,exports){
+},{"../../src":16}],9:[function(require,module,exports){
 const { html } = require('../../src');
 
 const Header = () => {
@@ -565,10 +615,12 @@ html`
 
 module.exports = Header;
 
-},{"../../src":14}],8:[function(require,module,exports){
+},{"../../src":16}],10:[function(require,module,exports){
 const {
   html, $, startAnimation,
 } = require('../../src');
+
+const NotificationManager = require('./NotificationManager');
 
 
 const LoaderBar = (percent) => {
@@ -599,7 +651,7 @@ const LoaderBar = (percent) => {
         $('.label', DomElement).innerHTML = `${parseInt(x, 10)}%`;
       },
     );
-
+    NotificationManager.emit('notification', 'dede', 'dedede');
     DomElement.events.cahnge(p);
   };
 
@@ -636,7 +688,7 @@ html`
 
 module.exports = LoaderBar;
 
-},{"../../src":14}],9:[function(require,module,exports){
+},{"../../src":16,"./NotificationManager":3}],11:[function(require,module,exports){
 const { html, $ } = require('../../src');
 
 html`
@@ -725,7 +777,7 @@ const MultiSelectColor = (values = []) => {
 
 module.exports = MultiSelectColor;
 
-},{"../../src":14}],10:[function(require,module,exports){
+},{"../../src":16}],12:[function(require,module,exports){
 const { html, $ } = require('../../src');
 
 const ProgressCircle = (radius = 60, stroke = 4, color = '#7D7C7D', startPercent = 80) => {
@@ -787,7 +839,7 @@ html`
 
 module.exports = ProgressCircle;
 
-},{"../../src":14}],11:[function(require,module,exports){
+},{"../../src":16}],13:[function(require,module,exports){
 const { html } = require('../../src');
 const RadioComponent = require('./componentRadio');
 
@@ -826,7 +878,7 @@ const RadioContainer = (labels, selectedIndex) => {
 
 module.exports = RadioContainer;
 
-},{"../../src":14,"./componentRadio":6}],12:[function(require,module,exports){
+},{"../../src":16,"./componentRadio":8}],14:[function(require,module,exports){
 const { html } = require('../../src');
 
 html`
@@ -853,7 +905,7 @@ const StoryPage = (title, element) => {
 
 module.exports = StoryPage;
 
-},{"../../src":14}],13:[function(require,module,exports){
+},{"../../src":16}],15:[function(require,module,exports){
 const { html, $, KEYS: { enter } } = require('../../src');
 const RadioContainer = require('./radioContainer');
 const MultiSelectColor = require('./multiSelectColor');
@@ -1058,7 +1110,7 @@ const ToDoList = () => {
 
 module.exports = ToDoList;
 
-},{"../../src":14,"./multiSelectColor":9,"./radioContainer":11}],14:[function(require,module,exports){
+},{"../../src":16,"./multiSelectColor":11,"./radioContainer":13}],16:[function(require,module,exports){
 // Selectors
 
 /**
@@ -1089,6 +1141,10 @@ const $$ = (selector, element = document) => {
 
 // templating
 
+const allNodes = arr => Array.isArray(arr)
+&& arr.reduce((acc, current) => acc && current instanceof Node, true);
+
+
 /**
  *
  * @param {String} text
@@ -1098,12 +1154,15 @@ const $$ = (selector, element = document) => {
 const html = (text, ...stuff) => {
   let ht = '';
   text.forEach((part, index) => {
-    if (!(stuff[index] instanceof Node)) {
+    if (allNodes(stuff[index])) {
+      ht += part + stuff[index].map((e, i) => `<temp temp-id='${index}' arr-id="${i}"></temp>`).join('');
+    } else if (!(stuff[index] instanceof Node)) {
       ht += stuff[index] ? part + stuff[index] : part;
     } else {
       ht += stuff[index] ? `${part}<temp temp-id='${index}'></temp>` : part;
     }
   });
+
   const template = document.createElement('template');
   template.innerHTML = ht.trim();
   const style = $('style', template.content);
@@ -1115,8 +1174,9 @@ const html = (text, ...stuff) => {
   ret.events = {};
   $$('temp', ret).forEach((e) => {
     const id = parseInt(e.getAttribute('temp-id'), 10);
-    const target = stuff[id];
-    e.parentNode.replaceChild(target, e);
+    const arrId = parseInt(e.getAttribute('arr-id'), 10);
+    const target = stuff[id][arrId] ? stuff[id][arrId] : stuff[id];
+    e.parentElement.replaceChild(target, e);
   });
   return ret;
 };

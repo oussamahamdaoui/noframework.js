@@ -2,6 +2,8 @@ const {
   html, $, startAnimation,
 } = require('../../src');
 
+const NotificationManager = require('./NotificationManager');
+
 
 const LoaderBar = (percent) => {
   const DomElement = html`
@@ -31,7 +33,7 @@ const LoaderBar = (percent) => {
         $('.label', DomElement).innerHTML = `${parseInt(x, 10)}%`;
       },
     );
-
+    NotificationManager.emit('notification', 'dede', 'dedede');
     DomElement.events.cahnge(p);
   };
 
