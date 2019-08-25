@@ -29,7 +29,7 @@ const $$ = (selector, element = document) => {
 // templating
 
 const allNodes = arr => Array.isArray(arr)
-&& arr.reduce((acc, current) => acc && current instanceof Node, true);
+  && arr.reduce((acc, current) => acc && current instanceof Node, true);
 
 
 /**
@@ -71,7 +71,51 @@ const html = (text, ...stuff) => {
 html.style = document.createElement('style');
 document.head.appendChild(html.style);
 
-// EventManager
+/**
+ * gets the value from an object given a path
+ * @param {Object} object
+ * @param {string} path path to the prop or the setter ex: 'data.code.elemets'
+ */
+const getPath = (object, path) => path.split('.').reduce((acc, key) => acc[key], object);
+
+
+/**
+ * sets the value from an object given a path
+ * @param {Object} object
+ * @param {string} path path to the prop or the setter ex: 'data.code.elemets'
+ * @param {} value
+ */
+
+const setPath = (object, path, value) => path.split('.').reduce((acc, key, i, keys) => {
+  if (i === keys.length - 1) {
+    acc[key] = value;
+  }
+  return acc[key];
+}, object);
+
+/**
+ * Apply changes to element
+ * @param {Object} element the object to apply changes to
+ * @param {Object} obj chnagments
+ * @return {Object}
+ */
+
+const apply = (element, obj) => {
+  Object.keys(obj).forEach((path) => {
+    const params = obj[path];
+    const setter = getPath(element, path);
+    if (setter instanceof Function) {
+      setter(...params);
+    } else {
+      setPath(element, path, setter);
+    }
+  });
+  return element;
+};
+
+/**
+ * A simple EventMager class that allows you to dispatch events and subscribe to them
+ */
 
 class EventManager {
   constructor() {
@@ -241,8 +285,8 @@ const startAnimation = (
  * @return {Boolean}
  */
 const sameDay = (d1, d2) => d1.getFullYear() === d2.getFullYear()
-    && d1.getMonth() === d2.getMonth()
-    && d1.getDate() === d2.getDate();
+  && d1.getMonth() === d2.getMonth()
+  && d1.getDate() === d2.getDate();
 
 /**
  * @param {Date} d the Date
@@ -266,6 +310,8 @@ module.exports = {
   $$,
   html,
   EventManager,
+  getPath,
+  setPath,
   smoothScrollTo,
   only,
   KEYS: {
@@ -289,4 +335,5 @@ module.exports = {
   ANIMATION_FUNCTIONS: {
     inOutQuad,
   },
+  apply,
 };
