@@ -71,6 +71,19 @@ const html = (text, ...stuff) => {
 html.style = document.createElement('style');
 document.head.appendChild(html.style);
 
+
+/**
+ * empties a node
+ * @param {Node} element
+ *
+ */
+
+const emptyElement = (element) => {
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
+  }
+};
+
 /**
  * gets the value from an object given a path
  * @param {Object} object
@@ -336,4 +349,5 @@ module.exports = {
     inOutQuad,
   },
   apply,
+  emptyElement,
 };
