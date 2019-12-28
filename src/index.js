@@ -20,7 +20,7 @@ const $ = (selector, element = document) => element.querySelector(selector);
 const $$ = (selector, element = document) => {
   const ret = Array.from(element.querySelectorAll(selector));
   ret.addEventListener = (...params) => {
-    ret.forEach(e => e.addEventListener(params));
+    ret.forEach(e => e.addEventListener(...params));
   };
   return ret;
 };
@@ -42,24 +42,19 @@ const html = (text, ...stuff) => {
   let ht = '';
   text.forEach((part, index) => {
     if (allNodes(stuff[index])) {
-      ht += part + stuff[index].map((e, i) => `<temp temp-id='${index}' arr-id="${i}"></temp>`).join('');
+      ht += part + stuff[index].map((e, i) => `<template temp-id='${index}' arr-id="${i}"></template>`).join('');
     } else if (!(stuff[index] instanceof Node)) {
       ht += stuff[index] ? part + stuff[index] : part;
     } else {
-      ht += stuff[index] ? `${part}<temp temp-id='${index}'></temp>` : part;
+      ht += stuff[index] ? `${part}<template temp-id='${index}'></template>` : part;
     }
   });
-
   const template = document.createElement('template');
   template.innerHTML = ht.trim();
-  const style = $('style', template.content);
-  if (style) {
-    html.style.textContent += style.textContent.trim();
-  }
   const ret = template.content.firstChild;
   ret.statics = {};
   ret.events = {};
-  $$('temp', ret).forEach((e) => {
+  $$('template', ret).forEach((e) => {
     const id = parseInt(e.getAttribute('temp-id'), 10);
     const arrId = parseInt(e.getAttribute('arr-id'), 10);
     const target = stuff[id][arrId] ? stuff[id][arrId] : stuff[id];
@@ -67,9 +62,6 @@ const html = (text, ...stuff) => {
   });
   return ret;
 };
-
-html.style = document.createElement('style');
-document.head.appendChild(html.style);
 
 
 /**
@@ -84,50 +76,9 @@ const emptyElement = (element) => {
   }
 };
 
-/**
- * gets the value from an object given a path
- * @param {Object} object
- * @param {string} path path to the prop or the setter ex: 'data.code.elemets'
- */
-const getPath = (object, path) => path.split('.').reduce((acc, key) => acc[key], object);
-
 
 /**
- * sets the value from an object given a path
- * @param {Object} object
- * @param {string} path path to the prop or the setter ex: 'data.code.elemets'
- * @param {} value
- */
-
-const setPath = (object, path, value) => path.split('.').reduce((acc, key, i, keys) => {
-  if (i === keys.length - 1) {
-    acc[key] = value;
-  }
-  return acc[key];
-}, object);
-
-/**
- * Apply changes to element
- * @param {Object} element the object to apply changes to
- * @param {Object} obj chnagments
- * @return {Object}
- */
-
-const apply = (element, obj) => {
-  Object.keys(obj).forEach((path) => {
-    const params = obj[path];
-    const setter = getPath(element, path);
-    if (setter instanceof Function) {
-      setter(...params);
-    } else {
-      setPath(element, path, setter);
-    }
-  });
-  return element;
-};
-
-/**
- * A simple EventMager class that allows you to dispatch events and subscribe to them
+ * A simple EventManager class that allows you to dispatch events and subscribe to them
  */
 
 class EventManager {
@@ -323,8 +274,6 @@ module.exports = {
   $$,
   html,
   EventManager,
-  getPath,
-  setPath,
   smoothScrollTo,
   only,
   KEYS: {
@@ -348,6 +297,5 @@ module.exports = {
   ANIMATION_FUNCTIONS: {
     inOutQuad,
   },
-  apply,
   emptyElement,
 };

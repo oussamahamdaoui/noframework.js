@@ -1,46 +1,62 @@
-const { getPath, setPath, apply } = require('./index');
+const {
+  html, $, $$,
+} = require('./index');
 
-test('accessPath works fine', () => {
-  const path = 'b.c';
-  const obj = {
-    b: {
-      c: 3,
-    },
-  };
 
-  setPath(obj, path, 5);
-  expect(getPath(obj, path)).toBe(5);
+test('$$ selector', () => {
+  const table = html`
+    <table>
+      <td></td>
+    </table>
+  `;
+
+  expect($$('td', table).length).toBe(1);
 });
 
 
-test('accessPath works fine', () => {
-  const path = 'b.c';
-  const obj = {
-    b: {
-      c: 3,
-    },
-  };
-
-  setPath(obj, path, 5);
-  expect(getPath(obj, path)).toBe(5);
+test('$$ selector event listener', () => {
+  const table = html`
+    <table>
+      <td></td>
+      <td></td>
+    </table>
+  `;
+  const evt = jest.fn();
+  $$('td', table).addEventListener('click', evt);
+  $('td', table).click();
+  expect(evt).toBeCalled();
 });
 
 
-test('accessPath works fine', () => {
-  const obj = {
-    b: {
-      c: 3,
-    },
-    f: 5,
-    setF(val) {
-      obj.f = val;
-    },
-  };
+test('$ selector', () => {
+  const table = html`
+    <table>
+      <td></td>
+    </table>
+  `;
 
-  apply(obj, {
-    'b.c': 3,
-    setF: [8],
-  });
-  expect(obj.f).toBe(8);
-  expect(obj.b.c).toBe(3);
+  expect($('td', table).nodeName).toBe('TD');
+});
+
+test('html with table', () => {
+  const table = html`
+    <table>
+      ${[1, 3, 4].map(e => html`<tr>
+      <td>${e}</td>
+      </tr>`)}
+    </table>
+  `;
+
+  expect(table.children.length).toBe(3);
+});
+
+test('html with array', () => {
+  const div = html`
+    <div>
+      ${[1, 3, 4]}
+    </div>
+  `;
+
+  expect(div.children.length).toBe(0);
+  expect(div.innerHTML.trim()).toBe('1,3,4');
 });
