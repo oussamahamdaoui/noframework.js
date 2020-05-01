@@ -1,208 +1,329 @@
-# @forgjs/noframework.js
+# Noframework.js
 
-@forgjs/noframework.js is just a file containig a few helper functions to help developpers write almost vanilla javascript. The reason of this project is to make developpers understand that they don't always need a framework and that javascript is pretty powerful on its own. 
-The module is composed of one main function `html` that transforms a `String` to `Dom Element`, all the other functions are small functions to prevent you from repeating yourself.
+Noframework.js is a list of small javascript functions that help you write almost pure javascript. Javascript is a pretty amazing language and using obscure javascript frameworks where you have very little control over what happens can be very frustrating this is why I wrote down these helper functions.
 
-See by yourself, here are the exported functions:
+## Getting started
+
+Simply install it with npm `npm i @forgjs/noframework`
+
+## The available functions:
+
+### $
+Returns the first element that matches a selector
+
 ```javascript
-module.exports = {
-  $, // a single element selector
-  $$, // a multiple element selector
-  html, // String to Dom element with small tweaks
-  EventManager, // a global event manager
-  only, // key event catcher
-  smoothScrollTo, // scroll smoothly to element
-  KEYS: { // predefined key catchers 
-    backspace,
-    tab,
-    enter,
-    shift,
-    ctrl,
-    alt,
-    esc,
-    left,
-    up,
-    right,
-    down,
-  },
-  DATE: {
-    sameDay, // are two dates the same day
-    getDaysInMonth, // get a list of days in month
-  },
-  startAnimation, // Animation function
-  ANIMATION_FUNCTIONS: {
-    inOutQuad,
-  },
-};
+// Example
+
+const { $ } = require('@forgjs/noframework');
+
+const app = $('.app'); // selects the first element with class app
+const menu = $('.menu', app); // selects the first element with class menu in app
+
 ```
 
-That's all what it is, a single file undestandable by anyone with basic javascript knowledge.
+### $$
 
-This is documentation is a good tutorial to teach devs how to set up their developpment environment, and make them understand what really happens when they use pre-configured tools like `create-react-app`, thats why it goes trough all the configuration.
+Returns an array of elements matching the selector
 
-You can see some examples live [here](https://oussamahamdaoui.github.io/noframework.js/build/)
+```javascript
+const { $, $$ } = require('@forgjs/noframework');
 
-## Getting started 🛠
+const app = $('.app'); // selects the first element with class app
 
-Here are the 11 steps you need to follow to get started:
+const items = $$('.item', app); // selects the all the elements with class items in app
 
-1. create a folder for your project
-2. run  `npm init`
-3. run  `npm install @forgjs/noframework`
-4. run  `npm install watchify`
-5. add a watching script to `package.json`
-
-```json
-{
-  "name": "project-name",
-  "version": "1.0.0",
-  "description": "",
-  "main": "ndex.js",
-  "scripts": {
-    "watch": "watchify src/index.js -o build/index.js"
-  },
-  "devDependencies": {
-    "watchify": "^3.11.1"
-  },
-  "dependencies":{
-    "@forgjs/noframework": "^1.0.0"
-  }
-}
 ```
-6. create a `build` folder
-7. add a `index.html` file in it
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Your title</title>
-</head>
-<body>
-  <script src="./index.js"></script>
-</body>
-</html>
-```
-8. create a `src` folder
-9. create your first component `checkBoxCompoent.js`
+
+
+### html
+
+Creates an node element from string
+
+*Warning: this function does NOT escape the provided HTML please use `escape` when using untrusted strings*
 
 ```javascript
 const { html } = require('@forgjs/noframework');
 
-html`<style>
-.checkBox{
-display: inline-flex;
-padding: 3px;
-justify-content: space-evenly;
+const app = html`
+  <div class="app">
+
+  </div>`;
+document.appendChild(app);
+```
+
+- This also works with async functions:
+
+
+```javascript
+const { html } = require('@forgjs/noframework');
+
+const page1 = async ()=>{
+  const DomElement = html`<div class="page1"></div>`;
+  const resp = await fetch('some-api.com');
+
+  DomElement.innerText = await resp.text();
+
+  return DomElement;
 }
 
-.checkBox > .box{
-width: 20px;
-height: 20px;
-background-color: #3B3A3B;
-border-radius:20px;
-position: relative;
-margin-right:20px;
+const app = html`
+  <div class="app">
+    ${page1()}
+  </div>`;
+document.appendChild(app);
+```
+
+- You can provide a list of Node elements too:
+
+
+```javascript
+const { html } = require('@forgjs/noframework');
+
+const names = ['Alice', 'Bob', 'Eve'];
+
+const Name = (name)=>{
+  const DomElement = html`<div class="name">${name}</div>`;
+  return DomElement;
 }
 
-.checkBox > .box::after{
-content: '';
-width: 90%;
-height: 90%;
-background-color: white;
-position: absolute;
-border-radius:20px;
-top:50%;
-left:50%;
-transform: translate(-50%, -50%);
-transition: all 150ms ease-in-out;
+const app = html`
+  <div class="app">
+    ${names.map(Name)}
+  </div>`;
+document.appendChild(app);
+```
+
+### escape
+
+This function escapes a string to make it safe to use with the `html` function
+
+
+```javascript
+const { escape } = require('@forgjs/noframework');
+
+escape('<div></div>') // returns &lt;div&gt;&lt;/div&gt;
+
+```
+
+### EventManager
+
+This class allows you to manage events, it acts as a single object for data flow:
+
+```javascript
+const { EventManager, html } = require('@forgjs/noframework');
+
+const Button = (eventManager) => {
+  const DomElement = html`<button>Click me</button>`;
+
+  DomElement.addEventListener('click', ()=>{
+    eventManager.emit('addOne');
+  });
 }
 
-.checkBox.on > .box::after{
-width: 50%;
-height: 50%;
-background-color: #7D7C7D;
+const Counter = (eventManager) => {
+  let value = 0;
+  const DomElement = html`<div>${value}</div>`;
+
+  eventManager.subscribe('addOne', ()=>{
+    value += 1;
+    DomElement.innerText = value;
+  });
 }
-</style>
-`;
+
+const globalEvents = new EventManager();
+const app = html`<div class="app">
+  ${Counter(globalEvents)}
+  ${Button(globalEvents)}
+</div>`;
+
+```
+
+An event manager instance has these methods:
+
+- `emit(eventName, ...params)` where `eventName` is a string and `...params` is the data to send with the event
+
+- `subscribe(eventName, callback)` where `eventName` is a string and `callback` is the function to call on the event.
+
+- `unsubscribe(eventName, callback)` where `eventName` is a string and `callback` is a reference to the function to remove from the event.
+
+- `clearEvent(eventName)` clears the event `eventName`
+
+By default there is a `*` event which is fired on any event.
+
+Every event has a `before-` and `after-` example:
+
+```javascript
+const { EventManager, html } = require('@forgjs/noframework');
+
+  const eventManager = new EventManager();
+
+  eventManager.subscribe('sayHello', (name) => {
+    console.log(`hello ${name}`);
+  });
+
+   eventManager.subscribe('before-sayHello', (name) => {
+    console.log('this runs before sayHello');
+  });
+
+   eventManager.subscribe('after-sayHello', (name) => {
+    console.log('this runs after sayHello');
+  });
+
+  eventManager.subscribe('*', () => {
+    console.log('this runs on any emit');
+  });
+
+  eventManager.emit('sayHello', 'ben');
+
+```
+
+### emptyElement
+
+Removes all children of a Node element `emptyElement(nodeElement)`;
 
 
-const CheckBox = (value = true, label = '') => {
-  let currentValue = value;
-  const DomElement = html`
-    <div class="checkBox ${value ? 'on' : ''}">
-      <div class="box"></div>
-      <div class="label">${label}</div>
+### cache
+
+caches a function response
+
+```javascript
+const { EventManager, html } = require('@forgjs/noframework');
+
+const add = (a, b) => {
+  return a + b;
+}
+
+const cachedAdd = cache(add, 1000); // represents the cache time in ms
+
+let two = cachedAdd(1, 1) // the first call runs add to get the response
+two = cachedAdd(1,1) // you get the cached response instead of calling add again
+
+
+```
+
+if no time is provided the result is cached forever *warning: this may slow down your code*
+
+### Router
+
+Router is a class that provides you a simple way of routing, it uses `history.pushState` and `history.popState` *please make sure these are available in your targeted browsers before using*
+
+```javascript
+
+  const eventManager = new EventManager();
+  const router = new Router(eventManager, '/404'); // '/404' is set as the url of the 404 page
+
+  const errorPage = html`
+    <div>
+      404
     </div>
   `;
 
-  DomElement.events.change = () => {};
 
-  DomElement.statics.toggle = () => {
-    DomElement.classList.toggle('on');
-    currentValue = !currentValue;
-  };
+  const page1 = html`
+    <div>
+      page1
+    </div>
+  `;
+
+  const page2 = html`
+    <div>
+      page2
+    </div>
+  `;
 
 
-  DomElement.statics.getValue = () => currentValue;
+  router.set('/page1', page1);
+  router.set('/page2', page2);
+  router.set('/404', errorPage);
 
-  DomElement.addEventListener('click', () => {
-    DomElement.statics.toggle();
-    DomElement.events.change(currentValue);
+
+  const app = html`<div>${router.init()}</div>`;
+
+  // now you can navigate your app by using the event manager like this:
+
+  eventManager.emit('reroute', '/page2');
+  eventManager.emit('reroute', '/page1');
+
+  // router also provides an event witch is fired after every page change
+
+  eventManager.subscribe('rerouted', (url, nodeElement, pageName)=>{
+    // do things
   });
 
-
-  return DomElement;
-};
-
-module.exports = CheckBox;
 ```
 
-10. create the main file `index.js`
+By default `Router` uses `document.pathName` to reroute to a specific component if you want to use a more complex routing system you can define it like this:
 
 ```javascript
-const { $, html } = require('@forgjs/noframework');
-const CheckBox = require('./checkBoxCompoent');
 
-const checkBox = CheckBox(true, 'first component done');
-const app = html`
-  <div id="app">
-    ${checkBox}
-  </div>
-`;
+  const eventManager = new EventManager();
+  const router = new Router(eventManager, '/404'); // '/404' is set as the url of the 404 page
 
-checkBox.events.change = (newValue) => {
-  console.log(newValue);
-};
+  const errorPage = html`
+    <div>
+      404
+    </div>
+  `;
 
-$('body').appendChild(app);
+
+  const page1 = html`
+    <div>
+      page1
+    </div>
+  `;
+
+  const page2 = html`
+    <div>
+      page2
+    </div>
+  `;
+
+
+  router.set('/page1', page1, (url, pageName) => { 
+    // url contains the value of document location
+    return (url.pathName === '/page1' && url.hash === '5') // if true the router will show the page1 component
+  });
+
+  router.set('/page2', page2);
+  router.set('/404', errorPage);
+
 ```
 
-11. Run `npm start watch` this will build your project on every change
+`Router` uses `replaceWith()` to navigate between components if you want to animate the transition between pages or do something more specific you can define a transition function like this:
 
-Here is the folder structure you will end up having:
+```javascript
+
+  const eventManager = new EventManager();
+  const router = new Router(eventManager, '/404'); // '/404' is set as the url of the 404 page
+
+  const errorPage = html`
+    <div>
+      404
+    </div>
+  `;
+
+
+  const page1 = html`
+    <div>
+      page1
+    </div>
+  `;
+
+  const page2 = html`
+    <div>
+      page2
+    </div>
+  `;
+
+  const transitionFn = (fromPage, toPage) => {
+    // do your transition
+    // toPage is not in the document you will need to append it to make it visible
+  }
+
+
+  router.set('/page1', page1, undefined, transitionFn);
+
+  router.set('/page2', page2, undefined, transitionFn);
+  router.set('/404', errorPage, undefined, transitionFn);
 
 ```
-yourprojet/
-|  build/
-|  |  index.html
-|  |  index.js
-|  src/
-|  |  checkBoxCompoent.js
-|  |  index.js
-|  package.json
-```
-
-
-Some tips:
-
-- If you are using Visual Studio you should install the Live Server extension to be able to reload the page on every change, just open the `buil/index.html` file with it (press `Ctrl-Shift-P` and type `Open with Live Server`).
-- Also you can install es6-string-html to get sytax coloration for the html in your javascript
-
-## What's next
-
-You can see the examples present in the `exemples` folder, then actually learn javascript without frameworks. And if you need more info just reed the code (its just one file im sure you can do that 👍)
-
-Happy coding.
