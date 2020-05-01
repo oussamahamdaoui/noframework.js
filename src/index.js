@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 // Selectors
 
 /**
@@ -33,7 +34,8 @@ const allNodes = arr => Array.isArray(arr)
 
 
 /**
- *
+ * Creates an Node element from string
+ * Warning: you should escape any untreated string
  * @param {String} text
  *
  * @return {Node}
@@ -42,23 +44,31 @@ const html = (text, ...stuff) => {
   let ht = '';
   text.forEach((part, index) => {
     if (allNodes(stuff[index])) {
-      ht += part + stuff[index].map((e, i) => `<template temp-id='${index}' arr-id="${i}"></template>`).join('');
-    } else if (!(stuff[index] instanceof Node)) {
+      ht += part + stuff[index].map((e, i) => `<template style="display:none" temp-id='${index}' arr-id="${i}"></template>`).join('');
+    } else if (!(stuff[index] instanceof Node) && !(stuff[index] instanceof Promise)) {
       ht += stuff[index] ? part + stuff[index] : part;
     } else {
-      ht += stuff[index] ? `${part}<template temp-id='${index}'></template>` : part;
+      ht += stuff[index] ? `${part}<template style="display:none" temp-id='${index}'></template>` : part;
     }
   });
   const template = document.createElement('template');
   template.innerHTML = ht.trim();
   const ret = template.content.firstChild;
-  ret.statics = {};
-  ret.events = {};
-  $$('template', ret).forEach((e) => {
+  $$('[temp-id]', ret).forEach((e) => {
     const id = parseInt(e.getAttribute('temp-id'), 10);
     const arrId = parseInt(e.getAttribute('arr-id'), 10);
     const target = stuff[id][arrId] ? stuff[id][arrId] : stuff[id];
-    e.parentElement.replaceChild(target, e);
+    if (target instanceof Promise) {
+      target.then((resp) => {
+        if (resp instanceof Node) {
+          e.parentElement.replaceChild(resp, e);
+        } else {
+          e.parentElement.replaceChild(document.createTextNode(resp), e);
+        }
+      });
+    } else {
+      e.parentElement.replaceChild(target, e);
+    }
   });
   return ret;
 };
@@ -83,7 +93,9 @@ const emptyElement = (element) => {
 
 class EventManager {
   constructor() {
-    this.events = {};
+    this.events = {
+      '*': [],
+    };
   }
 
   /**
@@ -104,6 +116,9 @@ class EventManager {
 
   subscribe(eventName, callback) {
     this.events[eventName] = this.events[eventName] ? this.events[eventName] : [];
+    this.events[`before-${eventName}`] = this.events[`before-${eventName}`] ? this.events[`before-${eventName}`] : [];
+    this.events[`after-${eventName}`] = this.events[`after-${eventName}`] ? this.events[`after-${eventName}`] : [];
+
     this.events[eventName].push(callback);
   }
 
@@ -112,6 +127,8 @@ class EventManager {
    * @param {String} eventName
    */
   clearEvent(eventName) {
+    delete this.events[`before-${eventName}`];
+    delete this.events[`after-${eventName}`];
     delete this.events[eventName];
   }
 
@@ -124,178 +141,203 @@ class EventManager {
 
   emit(eventName, ...params) {
     this.events[eventName] = this.events[eventName] ? this.events[eventName] : [];
+    this.events[`before-${eventName}`] = this.events[`before-${eventName}`] ? this.events[`before-${eventName}`] : [];
+    this.events[`after-${eventName}`] = this.events[`after-${eventName}`] ? this.events[`after-${eventName}`] : [];
+
+    this.events[`before-${eventName}`].forEach((callback) => {
+      callback(...params);
+    });
     this.events[eventName].forEach((callback) => {
       callback(...params);
+    });
+    this.events[`after-${eventName}`].forEach((callback) => {
+      callback(...params);
+    });
+    this.events['*'].forEach((callback) => {
+      callback(eventName, ...params);
     });
   }
 }
 
-// event helpers
+const fHash = (str) => {
+  let hash = 0;
+  if (str.length === 0) {
+    return 0;
+  }
+
+  for (let i = 0; i < str.length; i += 1) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char; // eslint-disable-line
+    hash &= hash; // eslint-disable-line
+  }
+  return hash;
+};
 
 /**
  *
- * @param {Number} keyCode
+ * @param {Function} fn The function to be cached
+ * @param {Number} storageTime cache time in ms
  * @return {Function}
- *
  */
-
-const only = keyCode => fn => (evt) => {
-  if (evt.keyCode === keyCode) {
-    fn(evt);
-  }
-};
-
-const backspace = only(8);
-const tab = only(9);
-const enter = only(13);
-const shift = only(16);
-const ctrl = only(17);
-const alt = only(18);
-const esc = only(27);
-const left = only(37);
-const up = only(38);
-const right = only(39);
-const down = only(40);
-
-
-const inOutQuad = (n) => {
-  // eslint-disable-next-line
-  n *= 2;
-  if (n < 1) return 0.5 * n * n;
-  // eslint-disable-next-line
-  return -0.5 * (--n * (n - 2) - 1);
-};
-
-// other
-
-/**
- *
- * @param {Node} element Element to scroll
- * @param {Number} to height to scroll to
- * @param {Number} duration duration in ms
- */
-
-const smoothScrollTo = (element, to, duration) => {
-  const start = element.scrollTop;
-  const change = to - start;
-  const startDate = +new Date();
-
-  const easeInOutQuad = (t, b, c, d) => {
-    // eslint-disable-next-line no-param-reassign
-    t /= d / 2;
-    if (t < 1) return c / 2 * t * t + b;
-    // eslint-disable-next-line no-param-reassign
-    t -= 1;
-    return -c / 2 * (t * (t - 2) - 1) + b;
-  };
-
-  const animateScroll = () => {
-    const currentDate = +new Date();
-    const currentTime = currentDate - startDate;
-    // eslint-disable-next-line no-param-reassign
-    element.scrollTop = parseInt(easeInOutQuad(currentTime, start, change, duration), 10);
-    if (currentTime < duration) {
-      requestAnimationFrame(animateScroll);
-    } else {
-      // eslint-disable-next-line no-param-reassign
-      element.scrollTop = to;
+const cache = (fn, storageTime) => {
+  const CALLS = {};
+  const isOutOfTime = ms => (storageTime ? +Date.now() - ms > storageTime : false);
+  return (...args) => {
+    const key = fHash(JSON.stringify(args));
+    if (!CALLS[key] || isOutOfTime(CALLS[key].lastCall)) {
+      CALLS[key] = {};
+      CALLS[key].resp = fn(...args);
+      CALLS[key].lastCall = Date.now();
     }
+    return CALLS[key].resp;
   };
-  animateScroll();
 };
 
-/**
- *
- * @param {Number} from
- * @param {Number} to
- * @param {Number} duration in ms
- * @param {Function} callback function to call on each frame
- * @param {*} easeFunction default inOutQuad
- */
-
-const startAnimation = (
-  from = 20,
-  to = 300,
-  duration = 1000,
-  callback,
-  easeFunction = inOutQuad,
-) => {
-  let stop = false;
-  let start = null;
-  const draw = (now) => {
-    if (stop) return;
-    if (now - start >= duration) stop = true;
-    const p = (now - start) / duration;
-    const val = easeFunction(p);
-    const x = from + (to - from) * val;
-    callback(x);
-    requestAnimationFrame(draw);
-  };
-  const startAnim = (timeStamp) => {
-    start = timeStamp;
-    draw(timeStamp);
-  };
-
-  requestAnimationFrame(startAnim);
-};
-
-// Date
 
 /**
  *
- * @param {Date} d1
- * @param {Date} d2
- *
- * @return {Boolean}
+ * @param {String} string
+ * @return {String}
  */
-const sameDay = (d1, d2) => d1.getFullYear() === d2.getFullYear()
-  && d1.getMonth() === d2.getMonth()
-  && d1.getDate() === d2.getDate();
 
-/**
- * @param {Date} d the Date
- * @return {Date[]} List with date objects for each day of the month
- */
-const getDaysInMonth = (d = new Date()) => {
-  const month = d.getMonth();
-  const year = d.getFullYear();
-  const date = new Date(year, month, 1);
-  const days = [];
-  while (date.getMonth() === month) {
-    days.push(new Date(date));
-    date.setDate(date.getDate() + 1);
+const escape = (string) => {
+  const htmlReg = /["'&<>]/;
+  const str = `${string}`;
+  const match = htmlReg.exec(str);
+  if (!match) {
+    return str;
   }
-  return days;
+  let escaped = '';
+  let ret = '';
+  let index = 0;
+  let lastIndex = 0;
+
+  for (index = match.index; index < str.length; index += 1) { //eslint-disable-line
+    switch (str.charCodeAt(index)) {
+      case 34:
+        escaped = '&quot;';
+        break;
+      case 38:
+        escaped = '&amp;';
+        break;
+      case 39:
+        escaped = '&#39;';
+        break;
+      case 60:
+        escaped = '&lt;';
+        break;
+      case 62:
+        escaped = '&gt;';
+        break;
+      default:
+        // eslint-disable-next-line no-continue
+        continue;
+    }
+    if (lastIndex !== index) {
+      ret += str.substring(lastIndex, index);
+    }
+    lastIndex = index + 1;
+    ret += escaped;
+  }
+  return lastIndex !== index ? ret + str.substring(lastIndex, index) : ret;
 };
+
+
+class Router {
+  /**
+   * @callback routingFunction Specifies if routing should happen to this pageName
+   * @param {Location} url the value of document.location
+   * @param {String} pageName the name of the page
+   * @returns {Boolean} if true routes to pageName
+   * */
+
+  /**
+   * @callback animationFunction Specifies the transition on routing
+   * @param {Node} currentPage the current page element
+   * @param {Node} destinationPage the destinationPage element
+   * (this element is not in the dom if you want to animate you should first add it to the dom)
+   * */
+
+  /**
+   * Creates a router element
+   * @param {EventManager} eventManager an event manager object
+   * @param {String} pageNotFound the name of the 404 page
+   */
+  constructor(eventManager, pageNotFound) {
+    this.eventManager = eventManager;
+    this.ROUTES = {};
+    this.currentPage = html`<div></div>`;
+    this.pageNotFound = pageNotFound;
+    this.eventManager.subscribe('reroute', (url, title, data) => {
+      window.history.pushState(data, title, url);
+      this.onReroute(document.location);
+    });
+    window.addEventListener('popstate', (...params) => {
+      this.onReroute(document.location, ...params);
+    });
+  }
+
+  /**
+ *
+ * @param {String} pageName the name of the page
+ * @param {Node} component the page Node element
+ * @param {routingFunction} [routingFunction] Specifies if routing should happen to this pageName
+ * @param {animationFunction} [animationFunction] Specifies the transition on routing
+ */
+  set(pageName, component, routingFunction, animationFunction) {
+    this.ROUTES[pageName] = {
+      component,
+      pageName,
+      routingFunction: routingFunction || Router.defaultRoutingFunction,
+      animationFunction: animationFunction || Router.defaultAnimationFunction,
+    };
+  }
+
+  static defaultRoutingFunction(url, pageName) {
+    return pageName === url.pathname;
+  }
+
+  static defaultAnimationFunction(from, to) {
+    from.replaceWith(to);
+  }
+
+  onReroute(url) {
+    let rerouted = false;
+    Object.values(this.ROUTES).forEach((route) => {
+      if (route.routingFunction(url, route.pageName)) {
+        route.animationFunction(this.currentPage, route.component);
+        this.currentPage = route.component;
+        this.eventManager.emit('rerouted', url, route.component, route.pageName);
+        rerouted = true;
+      }
+    });
+    if (rerouted === false) {
+      const route = this.ROUTES[this.pageNotFound];
+      route.animationFunction(this.currentPage, route.component);
+      this.currentPage = route.component;
+      this.eventManager.emit('rerouted', url, route.component, route.pageName);
+      rerouted = true;
+    }
+  }
+
+  /**
+   * reroutes to the document.location and returns the router element
+   */
+
+  init() {
+    this.eventManager.emit('reroute', document.location);
+    return this.currentPage;
+  }
+}
 
 
 module.exports = {
   $,
   $$,
   html,
+  escape,
   EventManager,
-  smoothScrollTo,
-  only,
-  KEYS: {
-    backspace,
-    tab,
-    enter,
-    shift,
-    ctrl,
-    alt,
-    esc,
-    left,
-    up,
-    right,
-    down,
-  },
-  DATE: {
-    sameDay,
-    getDaysInMonth,
-  },
-  startAnimation,
-  ANIMATION_FUNCTIONS: {
-    inOutQuad,
-  },
   emptyElement,
+  cache,
+  Router,
 };

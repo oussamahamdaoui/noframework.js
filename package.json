@@ -4,8 +4,8 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest",
-    "watch": "watchify exemples/components-story.js -o build/index.js"
+    "test": "jest --coverage",
+    "watch": "watchify doc/index.js -o build/index.js"
   },
   "repository": {
     "type": "git",
