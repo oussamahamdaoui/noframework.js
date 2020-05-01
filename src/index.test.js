@@ -105,7 +105,7 @@ test('cached result ', async () => {
 test('caching function without params', async () => {
   const oneFn = jest.fn(() => 1);
 
-  const cachedAdd = cache(oneFn, 1000);
+  const cachedAdd = cache(oneFn, 500);
 
   const call1 = cachedAdd();
   expect(oneFn.mock.calls.length).toBe(1);
