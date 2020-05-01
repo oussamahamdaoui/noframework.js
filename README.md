@@ -4,7 +4,16 @@ Noframework.js is a list of small javascript functions that help you write almos
 
 ## Getting started
 
-Simply install it with npm `npm i @forgjs/noframework`
+To add it to an existing project run: `npm i @forgjs/noframework`
+
+If you want to start a completely new project please use:
+
+`npx nfmk-init --init`
+
+To start a development server use:
+
+`npx nfmk-init --watch`
+
 
 ## The available functions:
 
