@@ -4,8 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest --coverage",
-    "watch": "watchify doc/index.js -o build/index.js"
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -18,8 +17,7 @@
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-plugin-import": "^2.18.0",
     "eslint-plugin-jest": "^22.15.2",
-    "jest": "^24.9.0",
-    "watchify": "^3.11.1"
+    "jest": "^24.9.0"
   },
   "dependencies": {}
 }
