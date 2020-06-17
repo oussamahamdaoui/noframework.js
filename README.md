@@ -1,4 +1,4 @@
-# Noframework.js
+# ![noframework.js](https://oussamahamdaoui.github.io/nfmk-doc/media/logo.svg)
 
 Noframework.js is a list of small javascript functions that help you write almost pure javascript. Javascript is a pretty amazing language and using obscure javascript frameworks where you have very little control over what happens can be very frustrating this is why I wrote down these helper functions.
 
