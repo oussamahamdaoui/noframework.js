@@ -10,6 +10,10 @@ const wait = ms => new Promise((resolve) => {
   }, ms);
 });
 
+beforeEach(() => {
+  document.body.innerHTML = '';
+});
+
 
 test('$$ selector', () => {
   const table = html`
@@ -19,6 +23,9 @@ test('$$ selector', () => {
   `;
 
   expect($$('td', table).length).toBe(1);
+  expect($$('td').length).toBe(0);
+  document.body.appendChild(table);
+  expect($$('td').length).toBe(1);
 });
 
 
@@ -44,6 +51,7 @@ test('$ selector', () => {
   `;
 
   expect($('td', table).nodeName).toBe('TD');
+  expect($('td')).toBe(null);
 });
 
 test('html with table', () => {
@@ -105,17 +113,32 @@ test('cached result ', async () => {
 test('caching function without params', async () => {
   const oneFn = jest.fn(() => 1);
 
-  const cachedAdd = cache(oneFn, 500);
+  const cachedOne = cache(oneFn, 500);
 
-  const call1 = cachedAdd();
+  const call1 = cachedOne();
   expect(oneFn.mock.calls.length).toBe(1);
   expect(call1).toBe(1);
-  const call2 = cachedAdd();
+  const call2 = cachedOne();
   expect(call2).toBe(1);
   expect(oneFn.mock.calls.length).toBe(1);
 
   await wait(1000); // wait 1000 ms until cache expires
-  const call3 = cachedAdd();
+  const call3 = cachedOne();
+  expect(oneFn.mock.calls.length).toBe(2);
+  expect(call3).toBe(1);
+});
+
+test('caching async function without params', async () => {
+  const oneFn = jest.fn(async () => 1);
+  const cachedAdd = cache(oneFn, 500);
+  const call1 = await cachedAdd();
+  expect(call1).toBe(1);
+  expect(oneFn.mock.calls.length).toBe(1);
+  const call2 = await cachedAdd();
+  expect(call2).toBe(1);
+  expect(oneFn.mock.calls.length).toBe(1);
+  await wait(1000);
+  const call3 = await cachedAdd();
   expect(oneFn.mock.calls.length).toBe(2);
   expect(call3).toBe(1);
 });
@@ -145,6 +168,23 @@ test('EventManager create event', () => {
   expect(doSomething.mock.calls.length).toBe(1);
 });
 
+test('EventManager subscribe to event twice', () => {
+  const doSomething = jest.fn((...stuff) => stuff);
+  const doSomething2 = jest.fn((...stuff) => stuff);
+
+  const eventManager = new EventManager();
+
+  eventManager.subscribe('do-something', doSomething);
+  eventManager.subscribe('do-something', doSomething2);
+
+  expect(doSomething.mock.calls.length).toBe(0);
+  expect(doSomething2.mock.calls.length).toBe(0);
+
+  eventManager.emit('do-something');
+  expect(doSomething.mock.calls.length).toBe(1);
+  expect(doSomething2.mock.calls.length).toBe(1);
+});
+
 test('EventManager clear event', () => {
   const doSomething = jest.fn(() => { });
   const eventManager = new EventManager();
@@ -154,6 +194,20 @@ test('EventManager clear event', () => {
   eventManager.emit('do-something');
   expect(doSomething.mock.calls.length).toBe(1);
   eventManager.clearEvent('do-something');
+  eventManager.emit('do-something');
+  expect(doSomething.mock.calls.length).toBe(1);
+});
+
+
+test('EventManager unsubscribe from event', () => {
+  const doSomething = jest.fn(() => { });
+  const eventManager = new EventManager();
+
+  eventManager.subscribe('do-something', doSomething);
+  expect(doSomething.mock.calls.length).toBe(0);
+  eventManager.emit('do-something');
+  expect(doSomething.mock.calls.length).toBe(1);
+  eventManager.unsubscribe('do-something', doSomething);
   eventManager.emit('do-something');
   expect(doSomething.mock.calls.length).toBe(1);
 });
@@ -176,6 +230,50 @@ test('EventManager before event', () => {
   eventManager.emit('do-something');
   expect(doSomething.mock.calls.length).toBe(1);
   expect(before.mock.calls.length).toBe(1);
+});
+
+test('EventManager after event', () => {
+  const doSomething = jest.fn();
+  const after = jest.fn();
+  const eventManager = new EventManager();
+
+  eventManager.subscribe('do-something', doSomething);
+  eventManager.subscribe('after-do-something', after);
+  expect(doSomething.mock.calls.length).toBe(0);
+  expect(after.mock.calls.length).toBe(0);
+
+  eventManager.emit('do-something');
+  expect(doSomething.mock.calls.length).toBe(1);
+  expect(after.mock.calls.length).toBe(1);
+
+  eventManager.clearEvent('do-something');
+  eventManager.emit('do-something');
+  expect(doSomething.mock.calls.length).toBe(1);
+  expect(after.mock.calls.length).toBe(1);
+});
+
+
+test('EventManager * event', () => {
+  const doSomethingAlways = jest.fn();
+  const doA = jest.fn();
+  const doB = jest.fn();
+  const eventManager = new EventManager();
+
+  eventManager.subscribe('*', doSomethingAlways);
+  eventManager.subscribe('doA', doA);
+  eventManager.subscribe('doB', doB);
+
+
+  expect(doSomethingAlways.mock.calls.length).toBe(0);
+
+  eventManager.emit('doA');
+  expect(doSomethingAlways.mock.calls.length).toBe(1);
+  expect(doA.mock.calls.length).toBe(1);
+
+  eventManager.emit('doB');
+  expect(doSomethingAlways.mock.calls.length).toBe(2);
+  expect(doA.mock.calls.length).toBe(1);
+  expect(doB.mock.calls.length).toBe(1);
 });
 
 

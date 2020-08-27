@@ -16,7 +16,7 @@ const $ = (selector, element = document) => element.querySelector(selector);
  * @param {String} selector
  * @param {Node} element
  *
- * @return {NodeList}
+ * @return {[Node]}
  */
 const $$ = (selector, element = document) => {
   const ret = Array.from(element.querySelectorAll(selector));
@@ -36,19 +36,20 @@ const allNodes = arr => Array.isArray(arr)
 /**
  * Creates an Node element from string
  * Warning: you should escape any untreated string
- * @param {String} text
+ * @param {[String]} stringParts
+ * @param {[Promise|Node|[Node]]} inBetweens
  *
  * @return {Node}
  */
-const html = (text, ...stuff) => {
+const html = (stringParts, ...inBetweens) => {
   let ht = '';
-  text.forEach((part, index) => {
-    if (allNodes(stuff[index])) {
-      ht += part + stuff[index].map((e, i) => `<template style="display:none" temp-id='${index}' arr-id="${i}"></template>`).join('');
-    } else if (!(stuff[index] instanceof Node) && !(stuff[index] instanceof Promise)) {
-      ht += stuff[index] ? part + stuff[index] : part;
+  stringParts.forEach((part, index) => {
+    if (allNodes(inBetweens[index])) {
+      ht += part + inBetweens[index].map((e, i) => `<template style="display:none" temp-id='${index}' arr-id="${i}"></template>`).join('');
+    } else if (!(inBetweens[index] instanceof Node) && !(inBetweens[index] instanceof Promise)) {
+      ht += inBetweens[index] ? part + inBetweens[index] : part;
     } else {
-      ht += stuff[index] ? `${part}<template style="display:none" temp-id='${index}'></template>` : part;
+      ht += inBetweens[index] ? `${part}<template style="display:none" temp-id='${index}'></template>` : part;
     }
   });
   const template = document.createElement('template');
@@ -57,7 +58,7 @@ const html = (text, ...stuff) => {
   $$('[temp-id]', ret).forEach((e) => {
     const id = parseInt(e.getAttribute('temp-id'), 10);
     const arrId = parseInt(e.getAttribute('arr-id'), 10);
-    const target = stuff[id][arrId] ? stuff[id][arrId] : stuff[id];
+    const target = inBetweens[id][arrId] ? inBetweens[id][arrId] : inBetweens[id];
     if (target instanceof Promise) {
       target.then((resp) => {
         if (resp instanceof Node) {
@@ -161,10 +162,6 @@ class EventManager {
 
 const fHash = (str) => {
   let hash = 0;
-  if (str.length === 0) {
-    return 0;
-  }
-
   for (let i = 0; i < str.length; i += 1) {
     const char = str.charCodeAt(i);
     hash = ((hash << 5) - hash) + char; // eslint-disable-line
@@ -281,8 +278,8 @@ class Router {
  *
  * @param {String} pageName the name of the page
  * @param {Node} component the page Node element
- * @param {routingFunction} [routingFunction] Specifies if routing should happen to this pageName
- * @param {animationFunction} [animationFunction] Specifies the transition on routing
+ * @param {routingFunction} routingFunction Specifies if routing should happen to this pageName
+ * @param {animationFunction} animationFunction Specifies the transition on routing
  */
   set(pageName, component, routingFunction, animationFunction) {
     this.ROUTES[pageName] = {
