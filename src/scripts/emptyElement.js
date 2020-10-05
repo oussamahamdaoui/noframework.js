@@ -1,13 +1,13 @@
 /**
  * empties a node
- * @param {Node} element
+ * @param {HTMLElement} element
  *
  */
 
 const emptyElement = (element) => {
-    while (element.firstChild) {
-      element.removeChild(element.firstChild);
-    }
-  };
-  
-module.exports = emptyElement;  
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
+  }
+};
+
+module.exports = emptyElement;

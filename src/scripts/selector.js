@@ -1,9 +1,9 @@
 /**
  *
  * @param {String} selector
- * @param {Node} element
+ * @param {HTMLElement} element
  *
- * @return {Node}
+ * @return {HTMLElement}
  */
 
 const $ = (selector, element = document) => element.querySelector(selector);

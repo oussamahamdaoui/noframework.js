@@ -1,4 +1,3 @@
-//Imports
 const $$ = require('./array_selector');
 
 // templating
@@ -10,9 +9,9 @@ const allNodes = arr => Array.isArray(arr)
  * Creates an Node element from string
  * Warning: you should escape any untreated string
  * @param {[String]} stringParts
- * @param {[Promise|Node|[Node]]} inBetweens
+ * @param {[Promise|HTMLElement|[HTMLElement]]} inBetweens
  *
- * @return {Node}
+ * @return {HTMLElement}
  */
 const html = (stringParts, ...inBetweens) => {
   let ht = '';
