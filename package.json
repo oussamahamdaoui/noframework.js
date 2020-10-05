@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "dev": "watchify build/src/index.js -o build/index.js"
   },
   "repository": {
     "type": "git",
@@ -13,11 +14,13 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "browserify": "^16.5.2",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-plugin-import": "^2.18.0",
     "eslint-plugin-jest": "^22.15.2",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "watchify": "^3.11.1"
   },
   "dependencies": {}
 }

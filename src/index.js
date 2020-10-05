@@ -1,6 +1,4 @@
-/* eslint-disable no-underscore-dangle */
-
-//Imports
+// Imports
 const $ = require('./scripts/selector');
 const $$ = require('./scripts/array_selector');
 const html = require('./scripts/html');
@@ -10,7 +8,7 @@ const escape = require('./scripts/escape');
 const EventManager = require('./scripts/EventManager');
 const Router = require('./scripts/Router');
 
-//Exports
+// Exports
 module.exports = {
   $,
   $$,
