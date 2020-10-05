@@ -57,7 +57,9 @@ const app = html`
   <div class="app">
 
   </div>`;
+
 document.appendChild(app);
+
 ```
 
 - This also works with async functions:
@@ -79,6 +81,7 @@ const app = html`
   <div class="app">
     ${page1()}
   </div>`;
+  
 document.appendChild(app);
 ```
 
@@ -101,6 +104,8 @@ const app = html`
   </div>`;
 document.appendChild(app);
 ```
+
+*Warning: There should be only one root element*
 
 ### escape
 
