@@ -1,57 +1,54 @@
 # ![noframework.js](https://oussamahamdaoui.github.io/nfmk-doc/media/logo.svg)
 
-Noframework.js is a list of small javascript functions that help you write almost pure javascript. Javascript is a pretty amazing language and using obscure javascript frameworks where you have very little control over what happens can be very frustrating this is why I wrote down these helper functions.
+Noframework.js é uma lista de pequenas funções javascript que te ajudaram a escrever javascript quase puro. Javascript é uma linguagem incrível e usar frameworks obscuros onde você possui pouco controle sob o que acontece pode ser muito frustrante, por isso escrevi essas funções auxiliadoras.
 
-## Translations
-- [Brazilian Portuguese](README_TRANSLATIONS/README_ptbr)
+## Começando
 
-## Getting started
+Para adicionar a um projeto existente rode: 
 
-To add it to an existing project run: `npm i @forgjs/noframework`
+`npm i @forgjs/noframework`
 
-If you want to start a completely new project please use:
+Se quer começar um projeto completamente novo rode: 
 
 `npx nfmk-init --init`
 
-To start a development server use:
+Para iniciar um servidor de desenvolvimento use: 
 
 `npx nfmk-init --watch`
 
-
-## The available functions:
+## Funções disponíveis:
 
 ### $
-Returns the first element that matches a selector
+Retorna o primeiro elemento que corresponda a um seletor.
 
 ```javascript
 // Example
 
 const { $ } = require('@forgjs/noframework');
 
-const app = $('.app'); // selects the first element with class app
-const menu = $('.menu', app); // selects the first element with class menu in app
-
+const App = $('.App'); // seleciona o primeiro elemento da classe App
+const Menu = $('.Menu', App); // seleciona o primeiro elemento da classe Menu em App
 ```
 
 ### $$
 
-Returns an array of elements matching the selector
+Retorna uma array de elementos que corresponda a um seletor.
 
 ```javascript
 const { $, $$ } = require('@forgjs/noframework');
 
-const app = $('.app'); // selects the first element with class app
+const App = $('.App'); // seleciona o primeiro elemento da classe App
 
-const items = $$('.item', app); // selects the all the elements with class items in app
+const Items = $$('.Item', App); // seleciona todos os elementos da classe Items em App
 
 ```
 
 
 ### html
 
-Creates an node element from string
+Cria um elemento Node a partir de uma string.
 
-*Warning: this function does NOT escape the provided HTML please use `escape` when using untrusted strings*
+*Aviso: esta função NÃO escapa o HTML, favor usar `escape` quando utilizar strings não confiáveis.*
 
 ```javascript
 const { html } = require('@forgjs/noframework');
@@ -60,12 +57,10 @@ const app = html`
   <div class="app">
 
   </div>`;
-
 document.appendChild(app);
-
 ```
 
-- This also works with async functions:
+- Isso também funciona com funções assíncronas.
 
 
 ```javascript
@@ -84,11 +79,10 @@ const app = html`
   <div class="app">
     ${page1()}
   </div>`;
-  
 document.appendChild(app);
 ```
 
-- You can provide a list of Node elements too:
+- Você também pode utlizar uma lista de elementos Node:
 
 
 ```javascript
@@ -108,23 +102,21 @@ const app = html`
 document.appendChild(app);
 ```
 
-*Warning: There should be only one root element*
-
 ### escape
 
-This function escapes a string to make it safe to use with the `html` function
+Esta função escapa uma string para torná-la segura ao ser utilizada com a função `html`.
 
 
 ```javascript
 const { escape } = require('@forgjs/noframework');
 
-escape('<div></div>') // returns &lt;div&gt;&lt;/div&gt;
+escape('<div></div>') // retorna &lt;div&gt;&lt;/div&gt;
 
 ```
 
 ### EventManager
 
-This class allows you to manage events, it acts as a single object for data flow:
+Esta classe te permite manejar eventos, ela age como um único objeto para data flow:
 
 ```javascript
 const { EventManager, html } = require('@forgjs/noframework');
@@ -155,19 +147,19 @@ const app = html`<div class="app">
 
 ```
 
-An event manager instance has these methods:
+Um event manager possui estes métodos:
 
-- `emit(eventName, ...params)` where `eventName` is a string and `...params` is the data to send with the event
+- `emit(eventName, ...params)` onde `eventName` é uma string e `...params` é o dado para ser enviado com o evento.
 
-- `subscribe(eventName, callback)` where `eventName` is a string and `callback` is the function to call on the event.
+- `subscribe(eventName, callback)` onde `eventName` é uma string e `callback` é uma função para chamar o evento.
 
-- `unsubscribe(eventName, callback)` where `eventName` is a string and `callback` is a reference to the function to remove from the event.
+- `unsubscribe(eventName, callback)` onde `eventName` é uma string e `callback` é uma referência à função para remover do evento.
 
-- `clearEvent(eventName)` clears the event `eventName`
+- `clearEvent(eventName)` limpa o evento `eventName`.
 
-By default there is a `*` event which is fired on any event.
+Por padrão há um `*` evento que é ativado sob qualquer evento.
 
-Every event has a `before-` and `after-` example:
+Todo evento possui um `before-` e `after-`, eexemplo:
 
 ```javascript
 const { EventManager, html } = require('@forgjs/noframework');
@@ -196,12 +188,12 @@ const { EventManager, html } = require('@forgjs/noframework');
 
 ### emptyElement
 
-Removes all children of a Node element `emptyElement(nodeElement)`;
+Remove todos filhos de um elemento `emptyElement(nodeElement)`;
 
 
 ### cache
 
-caches a function response
+Adiciona a resposta de uma função ao cachê.
 
 ```javascript
 const { EventManager, html } = require('@forgjs/noframework');
@@ -210,24 +202,25 @@ const add = (a, b) => {
   return a + b;
 }
 
-const cachedAdd = cache(add, 1000); // represents the cache time in ms
+const cachedAdd = cache(add, 1000); // representa o tempo do cachê em milissegundos.
 
-let two = cachedAdd(1, 1) // the first call runs add to get the response
-two = cachedAdd(1,1) // you get the cached response instead of calling add again
+let two = cachedAdd(1, 1) // a primeira chamada roda add para receber a resposta.
+
+two = cachedAdd(1,1) // você recebe a resposta do cachê invés de chamar add novamente.
 
 
 ```
 
-if no time is provided the result is cached forever *warning: this may slow down your code*
+Se nenhum espaço de tempo é forneciado a resposta é adicionada ao cachê para sempre. *AVISO: isso pode deixar seu código lento*
 
 ### Router
 
-Router is a class that provides you a simple way of routing, it uses `history.pushState` and `history.popState` *please make sure these are available in your targeted browsers before using*
+Router é uma classe que fornece um jeito simples de fazer rotas, ela usa `history.pushState` e `history.popState`. *Favor se assegurar que elas estão disponíveis nos browsers que você pretende atingir antes de usá-la.*
 
 ```javascript
 
   const eventManager = new EventManager();
-  const router = new Router(eventManager, '/404'); // '/404' is set as the url of the 404 page
+  const router = new Router(eventManager, '/404'); // '/404' é definida como a url da página de erro 404.
 
   const errorPage = html`
     <div>
@@ -256,25 +249,25 @@ Router is a class that provides you a simple way of routing, it uses `history.pu
 
   const app = html`<div>${router.init()}</div>`;
 
-  // now you can navigate your app by using the event manager like this:
+  // agora você pode navegar pelo seu app usando o event manager assim:
 
   eventManager.emit('reroute', '/page2');
   eventManager.emit('reroute', '/page1');
 
-  // router also provides an event witch is fired after every page change
+  // router também provê um evento que é acionado sempre que a página muda
 
   eventManager.subscribe('rerouted', (url, nodeElement, pageName)=>{
-    // do things
+    // faça algo
   });
 
 ```
 
-By default `Router` uses `document.pathName` to reroute to a specific component if you want to use a more complex routing system you can define it like this:
+Por padrão `Router` usa `document.pathName` para rerotear para um componente específico, se você quer usar um sistema de rotas mais complexo pode fazê-lo assim:
 
 ```javascript
 
   const eventManager = new EventManager();
-  const router = new Router(eventManager, '/404'); // '/404' is set as the url of the 404 page
+  const router = new Router(eventManager, '/404'); // '/404' é definida como apágina do erro 404
 
   const errorPage = html`
     <div>
@@ -297,8 +290,8 @@ By default `Router` uses `document.pathName` to reroute to a specific component 
 
 
   router.set('/page1', page1, (url, pageName) => { 
-    // url contains the value of document location
-    return (url.pathName === '/page1' && url.hash === '5') // if true the router will show the page1 component
+    // url contém o local do documento
+    return (url.pathName === '/page1' && url.hash === '5') // se verdadeiro o router mostrará a paágina 1 do documento
   });
 
   router.set('/page2', page2);
@@ -306,12 +299,12 @@ By default `Router` uses `document.pathName` to reroute to a specific component 
 
 ```
 
-`Router` uses `replaceWith()` to navigate between components if you want to animate the transition between pages or do something more specific you can define a transition function like this:
+`Router` usa `replaceWith()` para navegar entre componentes, sevocê quer animar a transição entre páginas ou fazer algo mais específico você pode definir a função de transição assim:
 
 ```javascript
 
   const eventManager = new EventManager();
-  const router = new Router(eventManager, '/404'); // '/404' is set as the url of the 404 page
+  const router = new Router(eventManager, '/404'); // '/404' é definida como a página do erro 404
 
   const errorPage = html`
     <div>
@@ -333,8 +326,8 @@ By default `Router` uses `document.pathName` to reroute to a specific component 
   `;
 
   const transitionFn = (fromPage, toPage) => {
-    // do your transition
-    // toPage is not in the document you will need to append it to make it visible
+    // faça a transição
+    // toPage não está no documento, você terá que adicioná-la para torná-la visível.
   }
 
 
