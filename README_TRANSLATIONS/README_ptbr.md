@@ -2,6 +2,8 @@
 
 Noframework.js é uma lista de pequenas funções javascript que te ajudaram a escrever javascript quase puro. Javascript é uma linguagem incrível e usar frameworks obscuros onde você possui pouco controle sob o que acontece pode ser muito frustrante, por isso escrevi essas funções auxiliadoras.
 
+- [English](../README.md)
+
 ## Começando
 
 Para adicionar a um projeto existente rode: 
